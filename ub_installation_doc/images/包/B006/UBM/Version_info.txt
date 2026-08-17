@@ -1,0 +1,2 @@
+基线manifest分支: master
+基线repo: base_binary.repo
