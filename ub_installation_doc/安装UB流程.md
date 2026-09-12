@@ -16,13 +16,15 @@
 >
 > 2. 每个固件升级完成的中间间隔一段时间，不要衔接太紧，显示升级完成并不是真正升级完成。
 >
-> 3. 固件升级的顺序为 [1_BMC](images/包/B006/Kunpeng-Board/1_BMC/)->[2_CSR](images/包/CSR用这个里面的/)->[3_RE_CPLD](images/包/B006/Kunpeng-Board/3_RE_CPLD/)->[4_Base_CPLD](images/包/B006/Kunpeng-Board/4_Base_CPLD/)->[5_FE_CPLD](images/包/B006/Kunpeng-Board/5_FE_CPLD/)->[6_Back_CPLD](images/包/B006/Kunpeng-Board/6_Back_CPLD/)->[7_OCP](images/包/B006/Kunpeng-Board/7_OCP/)->[8_BIOS](images/包/bios升级用这个里面的/)->[9_VRD](images/包/B006/Kunpeng-Board/9_VRD/)。
+> 3. 固件升级的顺序为 [1_BMC](images/包/B006/Kunpeng-Board/1_BMC/)->[2_CSR](images/包/B006/Kunpeng-Board/2_CSR/)->[3_RE_CPLD](images/包/B006/Kunpeng-Board/3_RE_CPLD/)->[4_Base_CPLD](images/包/B006/Kunpeng-Board/4_Base_CPLD/)->[5_FE_CPLD](images/包/B006/Kunpeng-Board/5_FE_CPLD/)->[6_Back_CPLD](images/包/B006/Kunpeng-Board/6_Back_CPLD/)->[7_OCP](images/包/B006/Kunpeng-Board/7_OCP/)->[8_BIOS](images/包/bios升级用这个里面的/)->[9_VRD](images/包/B006/Kunpeng-Board/9_VRD/)->[正确的2_CSR](images/包/CSR用这个里面的/)->[MCU_1.50](images/包/B006/Kunpeng-Board/MCU_1.50/)。
 >
-> 4. 第七个固件会检查硬件是否符合要求，这个固件如果升级失败可以暂时不管，跳过升级后续固件。
+> 4. 第二个固件（CSR）升级了两次。第一次是 B006 目录里的，是因为防止 第四个固件（Base）升级失败；第二次是因为这个才是配套的，在后续安装 UBM 等不会报错。
+>
+> 5. 第七个固件（OCP）会检查硬件是否符合要求，这个固件如果升级失败可以暂时不管，跳过，继续升级后续固件。
 
 ## 三、安装 UBM\UBE\UBSE\UBSM
 
-详情参考[通算软件部署端到端安装指导](images/包/通算软件部署端到端安装指导.docx)。
+详情参考安装指导文档。
 
 该文档执行完成后，查询各软件包是否正确运行，回显为active说明ok
 
