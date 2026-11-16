@@ -13,6 +13,48 @@ oGRAC 中文文档低级错误检视与修复 skill。
 - 使用：将 `ograc-docs-review/` 目录复制到 `.opencode/skills/ograc-docs-review/` 或 `.agents/skills/ograc-docs-review/` 下即可生效。
 - 规则文件：`ograc-docs-review/references/ograc_rules.json`
 
+### ograc_sim_single
+
+单文件创建 oGRAC 单集群 LUN 开发环境（4 个 LUN，每个 LUN 两条 loopback 路径）。
+
+- 作用：在 Docker 容器内启动双节点主集群，支持 `status`、`verify`、SQL 登录、重启和清理等常用操作。
+- 特点：脚本内嵌 Dockerfile 与 CMS `cluster.sh`，不依赖 `docker/lun-sim/` 下的其他文件；复制到 oGRAC 源码树任意目录即可运行。
+- 位置：`common-scripts/ograc_sim_single.sh`
+
+前置条件：
+
+- 宿主机安装 Docker，并支持 LIO/configfs、`tcm_loop`、`sg3_utils`。
+- oGRAC 源码树包含 `build/build_ograc.sh`；编译时还需三方库，默认搜索源码根目录及 `third_party/`，也可设置 `THIRD_PARTY_PATH`。
+- `install` 需要 `package/oGRAC-*.tgz` 部署包；如果已有合适部署包，可跳过 `make`。
+
+使用：
+
+```bash
+cp common-scripts/ograc_sim_single.sh /path/to/oGRAC/
+cd /path/to/oGRAC
+
+sudo bash ./ograc_sim_single.sh create         # 创建 LUN、镜像和容器
+sudo bash ./ograc_sim_single.sh init           # 安装容器内编译依赖
+sudo bash ./ograc_sim_single.sh make debug     # 编译（已有部署包时可跳过）
+sudo bash ./ograc_sim_single.sh install debug  # 安装双节点
+sudo bash ./ograc_sim_single.sh start
+sudo bash ./ograc_sim_single.sh verify
+```
+
+常用命令：
+
+```bash
+sudo bash ./ograc_sim_single.sh status
+sudo bash ./ograc_sim_single.sh sql 0 "SELECT OPEN_STATUS FROM DV_DATABASE;"
+sudo bash ./ograc_sim_single.sh login 0
+sudo bash ./ograc_sim_single.sh stop
+sudo bash ./ograc_sim_single.sh restart
+sudo bash ./ograc_sim_single.sh log 100
+sudo bash ./ograc_sim_single.sh destroy
+```
+
+默认环境目录为 `/home/<用户>/ogracsim_single/cluster`，容器名为 `ograc-dev-<用户>`，默认端口为 CMS `18520/18521`、DSS `19100/19101`、oGRAC `19300/19301`。
+
 ## 许可证
 
 MulanPSL-2.0
