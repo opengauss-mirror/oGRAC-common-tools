@@ -13,6 +13,14 @@ oGRAC 中文文档低级错误检视与修复 skill。
 - 使用：将 `ograc-docs-review/` 目录复制到 `.opencode/skills/ograc-docs-review/` 或 `.agents/skills/ograc-docs-review/` 下即可生效。
 - 规则文件：`ograc-docs-review/references/ograc_rules.json`
 
+### security-developing-skills
+
+安全研发技能归档。
+
+- 作用：存放可复用的安全研发技能。当前包含 `opengauss-secret-scan`，用于扫描 openGauss 公开主仓历史提交中的 AK/SK、GitCode/Gitee access_token、OBS 访问密钥和大模型 API Key，并只读核验是否仍有效。
+- 使用：说明见 `security-developing-skills/README.md`。将 `security-developing-skills/opengauss-secret-scan/` 复制到 Cursor skills 目录后，按其中的 `SKILL.md` 运行。
+- 注意：扫描报告含密钥原文，只留本地，不要提交进 git。
+
 ## 许可证
 
 MulanPSL-2.0
