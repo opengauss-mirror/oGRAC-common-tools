@@ -59,9 +59,11 @@ sudo bash ./ograc_sim_single.sh destroy
 
 安全研发技能归档。
 
-- 作用：存放可复用的安全研发技能。当前包含 `opengauss-secret-scan`，用于扫描 openGauss 公开主仓历史提交中的 AK/SK、GitCode/Gitee access_token、OBS 访问密钥和大模型 API Key，并只读核验是否仍有效。
-- 使用：说明见 `security-developing-skills/README.md`。将 `security-developing-skills/opengauss-secret-scan/` 复制到 Cursor skills 目录后，按其中的 `SKILL.md` 运行。
-- 注意：扫描报告含密钥原文，只留本地，不要提交进 git。
+- 作用：存放可复用的安全研发技能。当前包含：
+  - `opengauss-secret-scan`：扫描 openGauss 公开主仓历史提交中的 AK/SK、GitCode/Gitee access_token、OBS 访问密钥和大模型 API Key，并只读核验是否仍有效。说明见 `security-developing-skills/opengauss-secret-scan/README.md`。
+  - `opengauss-third-party-cve`：给定 openGauss-third_party 仓库和 issue，排查 master、7.0.0、6.0.0，修复受影响分支并编译验证，只在本地 bugfix 分支提交。用法见 `security-developing-skills/opengauss-third-party-cve/README.md`。
+- 使用：将对应技能目录复制到 Cursor、OpenCode 或 `~/.codex/skills/` 后，按该目录里的 `SKILL.md` 运行。
+- 注意：secret-scan 的报告含密钥原文，只留本地，不要提交进 git。
 
 ## 许可证
 
