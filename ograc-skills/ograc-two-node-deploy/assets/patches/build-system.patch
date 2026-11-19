@@ -1,0 +1,186 @@
+diff --git a/build/Makefile.sh b/build/Makefile.sh
+index cdbb62d..62ecd06 100644
+--- a/build/Makefile.sh
++++ b/build/Makefile.sh
+@@ -375,7 +375,11 @@ func_make_release()
+     echo "make release"
+     func_all Release
+     func_prepare_pkg_name
+-    func_release_symbol
++    if [[ "${KEEP_DEBUG_INFO:-0}" != "1" ]]; then
++        func_release_symbol
++    else
++        echo "KEEP_DEBUG_INFO=1: keep debug info in release binaries, skip symbol separation."
++    fi
+     func_pkg_run
+ }
+ 
+@@ -528,7 +532,11 @@ func_making_package()
+     fi
+ 
+     if [[ "${build_package_mode}" = 'Release' ]] || [[ "${build_package_mode}" = 'Shard_Release' ]]; then
+-        func_release_symbol
++        if [[ "${KEEP_DEBUG_INFO:-0}" != "1" ]]; then
++            func_release_symbol
++        else
++            echo "KEEP_DEBUG_INFO=1: keep debug info in release binaries, skip symbol separation."
++        fi
+         func_pkg_run
+     fi
+ 
+diff --git a/build/build_dss.sh b/build/build_dss.sh
+index 92032d4..3e81ebb 100644
+--- a/build/build_dss.sh
++++ b/build/build_dss.sh
+@@ -261,8 +261,10 @@ function download_source() {
+             git clone -b 7.0.0 "${repo_url}" "${repo_path}"
+         elif is_git_repository "${repo_path}"; then
+             echo "Reuse existing ${repo_name} source: ${repo_path}"
++        elif [[ -d "${repo_path}" ]]; then
++            echo "Reuse existing ${repo_name} source tree without .git: ${repo_path}"
+         else
+-            echo "Error: ${repo_path} exists but is not a Git work tree."
++            echo "Error: ${repo_path} exists but is not a source directory."
+             echo "Please move it aside or provide a valid ${repo_name} source repository."
+             exit 1
+         fi
+@@ -281,10 +283,23 @@ function build_package() {
+     if [[ x"${THIRD_PATH}" == x"" ]];then
+         check_third_party_path
+     fi
+-    export CC=${THIRD_PATH}/buildtools/gcc10.3/gcc/bin/gcc
+-    export cc=${THIRD_PATH}/buildtools/gcc10.3/gcc/bin/gcc
+-    export GCCFOLDER=${THIRD_PATH}/buildtools/gcc10.3
+-    export LD_LIBRARY_PATH=$GCCFOLDER/gcc/lib64:$GCCFOLDER/isl/lib:$GCCFOLDER/mpc/lib/:$GCCFOLDER/mpfr/lib/:$GCCFOLDER/gmp/lib/:$LD_LIBRARY_PATH
++    local tp_gcc="${THIRD_PATH}/buildtools/gcc10.3/gcc/bin/gcc"
++    local tp_gxx="${THIRD_PATH}/buildtools/gcc10.3/gcc/bin/g++"
++    if [[ -x "${tp_gcc}" && -x "${tp_gxx}" ]]; then
++        export CC="${tp_gcc}"
++        export CXX="${tp_gxx}"
++        export cc="${tp_gcc}"
++        export GCCFOLDER="${THIRD_PATH}/buildtools/gcc10.3"
++        export LD_LIBRARY_PATH=$GCCFOLDER/gcc/lib64:$GCCFOLDER/isl/lib:$GCCFOLDER/mpc/lib/:$GCCFOLDER/mpfr/lib/:$GCCFOLDER/gmp/lib/:$LD_LIBRARY_PATH
++        export PATH=${THIRD_PATH}/buildtools/gcc10.3/gcc/bin:${PATH}
++    else
++        echo "Warning: third-party gcc10.3 toolchain is incomplete; using system gcc/g++."
++        export CC=$(command -v gcc)
++        export CXX=$(command -v g++)
++        export cc="${CC}"
++        export GCCFOLDER=""
++        export PATH=$(dirname "${CC}"):${PATH}
++    fi
+     local os_version=$(get_open_euler_version 2>/dev/null || true)
+     if [[ "${os_version}" == 24.03* ]]; then
+         # openEuler 24.03 ships cmake linked against system libstdc++ (gcc12).
+@@ -296,7 +311,6 @@ function build_package() {
+             export LD_PRELOAD=/usr/lib64/libstdc++.so.6${LD_PRELOAD:+:$LD_PRELOAD}
+         fi
+     fi
+-    export PATH=${THIRD_PATH}/buildtools/gcc10.3/gcc/bin:${PATH}
+     echo "Start to compile CBB."
+     local cbb_cmake_file="${OGDB_CODE_PATH}/CBB/CMakeLists.txt"
+     local cbb_cmake_backup
+@@ -321,40 +335,51 @@ function build_package() {
+     cp -arf ${OGDB_CODE_PATH}/DSS/output/lib/* "${OGDB_CODE_PATH}"/dss/lib/
+     echo "end to copy bin/lib source."
+ 
+-    echo "Start to separate debug symbols."
+-    rm -rf "${OGDB_CODE_PATH}/dss_symbols"
+-    mkdir -p "${OGDB_CODE_PATH}"/dss_symbols/{bin,lib}
+-    for dir in bin lib; do
+-        for f in "${OGDB_CODE_PATH}"/dss/${dir}/*; do
+-            [ -e "$f" ] || continue
+-            [ -f "$f" ] || continue
+-            [ -L "$f" ] && continue
+-            if ! file "$f" | grep -q "ELF"; then
+-                continue
+-            fi
+-            base_name=$(basename "$f")
+-            sym_file="${OGDB_CODE_PATH}/dss_symbols/${dir}/${base_name}.symbol"
+-            if [[ "$base_name" == *.so* ]]; then
+-                objcopy --only-keep-debug "$f" "$sym_file"
+-                objcopy --strip-unneeded "$f"
+-                objcopy --add-gnu-debuglink="$sym_file" "$f"
+-            else
+-                objcopy --only-keep-debug "$f" "$sym_file"
+-                objcopy --strip-all "$f"
+-                objcopy --add-gnu-debuglink="$sym_file" "$f"
+-            fi
++    if [[ "${KEEP_DEBUG_INFO:-0}" == "1" ]]; then
++        echo "KEEP_DEBUG_INFO=1: keep DSS debug info, skip symbol separation."
++        rm -rf "${OGDB_CODE_PATH}/dss_symbols"
++        mkdir -p "${OGDB_CODE_PATH}"/dss_symbols/{bin,lib}
++    else
++        echo "Start to separate debug symbols."
++        rm -rf "${OGDB_CODE_PATH}/dss_symbols"
++        mkdir -p "${OGDB_CODE_PATH}"/dss_symbols/{bin,lib}
++        for dir in bin lib; do
++            for f in "${OGDB_CODE_PATH}"/dss/${dir}/*; do
++                [ -e "$f" ] || continue
++                [ -f "$f" ] || continue
++                [ -L "$f" ] && continue
++                if ! file "$f" | grep -q "ELF"; then
++                    continue
++                fi
++                base_name=$(basename "$f")
++                sym_file="${OGDB_CODE_PATH}/dss_symbols/${dir}/${base_name}.symbol"
++                if [[ "$base_name" == *.so* ]]; then
++                    objcopy --only-keep-debug "$f" "$sym_file"
++                    objcopy --strip-unneeded "$f"
++                    objcopy --add-gnu-debuglink="$sym_file" "$f"
++                else
++                    objcopy --only-keep-debug "$f" "$sym_file"
++                    objcopy --strip-all "$f"
++                    objcopy --add-gnu-debuglink="$sym_file" "$f"
++                fi
++            done
+         done
+-    done
+-    echo "End to separate debug symbols."
++        echo "End to separate debug symbols."
++    fi
+ }
+ 
+ function source_state() {
+     local repo_path=$1
+-    (
+-        cd "${repo_path}"
+-        { git rev-parse HEAD; git diff --binary HEAD --; git ls-files --others --exclude-standard -z | xargs -0 -r sha256sum; } |
+-            sha256sum | awk '{print $1}'
+-    )
++    if is_git_repository "${repo_path}"; then
++        (
++            cd "${repo_path}"
++            { git rev-parse HEAD; git diff --binary HEAD --; git ls-files --others --exclude-standard -z | xargs -0 -r sha256sum; } |
++                sha256sum | awk '{print $1}'
++        )
++    else
++        # CBB/DSS may be shipped as plain source trees without a .git directory.
++        files_state "${repo_path}"
++    fi
+ }
+ 
+ function is_git_repository() {
+@@ -380,6 +405,7 @@ function write_dss_build_info() {
+     local third_party_gcc
+     third_party_path=$(readlink -f "${THIRD_PATH}")
+     third_party_gcc="${third_party_path}/buildtools/gcc10.3/gcc/bin/gcc"
++    [[ -x "${third_party_gcc}" ]] || third_party_gcc=$(command -v gcc)
+ 
+     {
+         echo "format=2"
+diff --git a/build/build_ograc.sh b/build/build_ograc.sh
+index 9df56ee..bb74ee6 100644
+--- a/build/build_ograc.sh
++++ b/build/build_ograc.sh
+@@ -116,8 +116,8 @@ function newPackageTarget() {
+   rm -rf ${pkg_dir_name}
+   echo "Packing ${pkg_name} success"
+ 
+-  # Unified symbols package: only generated for release builds
+-  if [[ ${BUILD_TYPE} == "release" ]]; then
++  # Unified symbols package: only generated for release builds without embedded debug info
++  if [[ ${BUILD_TYPE} == "release" ]] && [[ "${KEEP_DEBUG_INFO:-0}" != "1" ]]; then
+     local sym_pkg_name="${BUILD_PACK_NAME}-${ograc_version}"
+     if [[ -n "${os_distro_part}" ]]; then
+       sym_pkg_name="${sym_pkg_name}-${os_distro_part}"

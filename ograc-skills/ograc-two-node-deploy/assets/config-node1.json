@@ -1,0 +1,30 @@
+{
+    "deploy_mode": "dss",
+    "node_id": "1",
+    "cms_ip": "${NODE0};${NODE1}",
+    "db_type": "1",
+    "mes_ssl_switch": false,
+    "MAX_ARCH_FILES_SIZE": "300G",
+    "redo_num": "5",
+    "redo_size": "10G",
+    "ENABLE_PARA_LOG_FLUSH": false,
+    "auto_tune": "0",
+    "dss_vg_list": {
+        "vg1": "${DATA_DEV}",
+        "vg2": "${REDO_DEV}",
+        "vg3": "${ARCH_DEV}"
+    },
+    "gcc_home": "${GCC_DEV}",
+    "cms_port": "${CMS_PORT}",
+    "dss_port": "${DSS_PORT}",
+    "ograc_port": "${DB_PORT}",
+    "interconnect_port": "${INTERCONNECT_PORT}",
+    "_SHM_KEY": ${SHM_KEY},
+    "ograc_in_container": "0",
+    "module_config": {
+        "ograc_home": "${ROOT}/ograc",
+        "data_root": "${ROOT}/dbdata",
+        "user": "${OS_USER}",
+        "group": "${OS_GROUP}"
+    }
+}
