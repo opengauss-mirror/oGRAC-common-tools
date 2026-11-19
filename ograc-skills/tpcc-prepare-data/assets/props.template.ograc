@@ -1,0 +1,24 @@
+db=postgres
+driver=org.postgresql.Driver
+conn=__CONN__
+user=__USER__
+password=__PASSWORD__
+
+warehouses=__WAREHOUSES__
+loadWorkers=__WORKERS__
+terminals=1
+
+// Load-only props: terminals/runMins are not used by runDatabaseBuild.sh.
+runTxnsPerTerminal=0
+runMins=1
+limitTxnsPerMin=0
+
+terminalWarehouseFixed=true
+
+newOrderWeight=45
+paymentWeight=43
+orderStatusWeight=4
+deliveryWeight=4
+stockLevelWeight=4
+
+resultDirectory=__RESULT_DIR__
