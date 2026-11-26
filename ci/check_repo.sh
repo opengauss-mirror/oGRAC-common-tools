@@ -3,7 +3,7 @@
 #
 # 用法: ci/check_repo.sh [--strict]
 #   默认模式: shell 语法、Python 3 语法、README 目录索引、明文密钥。
-#   --strict : 额外检查 skill 规范（agentskills）、Markdown 断链、未展开的 LFS 指针、脚本可执行位。
+#   --strict : 额外检查 skill 规范（agentskills + oGRAC 命名）、Markdown 断链、未展开的 LFS 指针、脚本可执行位。
 #
 # 整改项与责任人见 docs/migration-map.md。
 set -uo pipefail
@@ -149,7 +149,7 @@ run_check "README 目录索引完整性" check_readme_index
 run_check "明文密钥扫描" check_secrets
 
 if [ "$strict" -eq 1 ]; then
-    run_check "skill 规范（agentskills）" check_skills
+    run_check "skill 规范（agentskills + 命名）" check_skills
     run_check "Markdown 链接" check_markdown_links
     run_check "LFS 指针已展开" check_lfs_pointers
     run_check "脚本可执行位" check_exec_bits

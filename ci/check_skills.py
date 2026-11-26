@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""校验 skill 目录是否符合 agentskills 规范。
+"""校验 skill 目录是否符合 agentskills 规范与 oGRAC 命名规则。
 
 规范: https://github.com/agentskills/agentskills/blob/main/docs/specification.mdx
-用法: python3 ci/check_skills.py [--root DIR]...
+命名: docs/skill-spec.md 第 4 节
+用法: python3 ci/check_skills.py [--root DIR]... [--spec-only]
 退出码: 0 全部合规; 1 存在违规
 """
 
@@ -20,6 +21,15 @@ MAX_DESCRIPTION = 1024
 MAX_COMPATIBILITY = 500
 MAX_SKILL_LINES = 500
 KNOWN_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+OGRAC_PREFIX = "ograc-"
+OGRAC_MAX_LEN = 32
+OGRAC_VERBS = {
+    "backup", "build", "check", "clean", "collect", "deploy", "design", "develop",
+    "diagnose", "install", "load", "migrate", "prepare", "publish", "restore",
+    "review", "run", "scan", "sync", "test", "uninstall", "upgrade", "verify",
+}
+OGRAC_BANNED = {"helper", "assistant", "util", "utils", "tool", "tools", "misc", "skill", "skills"}
+OGRAC_VERSIONING = {"new", "old", "latest", "legacy"}
 NON_STRING_SCALAR = re.compile(r"^(-?\d+(\.\d+)?|true|false|null|~)$", re.I)
 
 
@@ -93,7 +103,33 @@ def discover(roots):
     return found
 
 
-def validate(path, listing):
+def check_ograc_name(name):
+    errors = []
+    if not name.startswith(OGRAC_PREFIX):
+        errors.append(f"[ograc] name 必须以 {OGRAC_PREFIX} 开头: {name}")
+        return errors
+    if "_" in name:
+        errors.append("[ograc] 连接符只能用 -，不能用 _")
+    if len(name) > OGRAC_MAX_LEN:
+        errors.append(f"[ograc] name 超过 {OGRAC_MAX_LEN} 字符: {len(name)}（{name}）")
+    parts = name[len(OGRAC_PREFIX):].split("-")
+    if len(parts) < 2:
+        errors.append("[ograc] name 需为 ograc-<动词>-<对象>，至少三段")
+        return errors
+    verb = parts[0]
+    if verb not in OGRAC_VERBS:
+        errors.append(
+            f"[ograc] 第二段必须是动词，当前 '{verb}' 不在词表（见 docs/skill-spec.md 4.2）"
+        )
+    for part in parts:
+        if part in OGRAC_BANNED:
+            errors.append(f"[ograc] 禁用词不能出现在名字里: {part}")
+        if part in OGRAC_VERSIONING or re.fullmatch(r"v?\d+", part):
+            errors.append(f"[ograc] 名字不带版本/代次标记: {part}（版本写入 metadata.version）")
+    return errors
+
+
+def validate(path, listing, spec_only=False):
     errors, warnings = [], []
     entry = os.path.join(path, SKILL_ENTRY)
 
@@ -124,6 +160,8 @@ def validate(path, listing):
             errors.append(f"name 超过 {MAX_NAME} 字符: {len(name)}")
         if name != dirname:
             errors.append(f"name ({name}) 必须与目录名 ({dirname}) 一致")
+        if not spec_only:
+            errors.extend(check_ograc_name(name))
 
     description = front.get("description")
     if not isinstance(description, str) or not description.strip():
@@ -169,6 +207,7 @@ def validate(path, listing):
 
 def main(argv):
     roots = []
+    spec_only = "--spec-only" in argv
     for idx, arg in enumerate(argv):
         if arg == "--root" and idx + 1 < len(argv):
             roots.append(argv[idx + 1])
@@ -186,7 +225,7 @@ def main(argv):
     failed = 0
     warn_count = 0
     for path, listing in skills:
-        errors, warnings = validate(path, listing)
+        errors, warnings = validate(path, listing, spec_only)
         if errors:
             failed += 1
             print(f"FAIL  {path}")

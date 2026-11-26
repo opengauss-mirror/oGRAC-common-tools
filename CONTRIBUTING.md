@@ -24,13 +24,16 @@ ci/                       仓库自检
 
 ## 2. Skill 规范
 
-遵循 agentskills 规范。完整的字段约束、渐进披露建议、常见违规与修法见 [`docs/skill-spec.md`](docs/skill-spec.md)，提交前跑：
+遵循 agentskills 规范，并叠加本仓的命名规则。完整的字段约束、命名规则、正反例与改名对照见 [`docs/skill-spec.md`](docs/skill-spec.md)，提交前跑：
 
 ```bash
-python3 ci/check_skills.py
+python3 ci/check_skills.py                # 规范 + oGRAC 命名规则
+python3 ci/check_skills.py --spec-only    # 只查上游规范
 ```
 
-本仓在此之上的附加约定只有三条：
+本仓在此之上的附加约定：
+
+- **命名**：`ograc-<动词>-<对象>[-<限定语>]`，第二段必须出自动词词表，只用 `-` 连接，总长 ≤ 32 字符，不带版本号。见 [`docs/skill-spec.md`](docs/skill-spec.md) 第 4 节。
 
 - **归位**：skill 目录最终放在 `skills/<name>/`；迁移期 `ograc-skills/`、`ograc-docs-review/` 同样受规范约束。
 - **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。

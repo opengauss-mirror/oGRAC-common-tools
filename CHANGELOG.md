@@ -8,8 +8,8 @@
 
 - 仓库治理框架：根 `README.md` 改为目录索引，新增 `CONTRIBUTING.md`、`CHANGELOG.md`、`.gitignore`。
 - `ci/check_repo.sh`、`ci/check_links.py`：本地质量门禁（shell/Python 语法、README 索引、明文密钥与内网地址；`--strict` 额外检查 skill 规范、断链、LFS 指针、可执行位）。
-- `docs/skill-spec.md`：skill 目录规范（agentskills），含字段约束、渐进披露建议与常见违规修法。
-- `ci/check_skills.py`：按 agentskills 规范校验 skill 目录（`name` 与目录同名、命名字符、`description` 长度、`metadata` 值类型、入口文件名、500 行建议、引用层级），已用 13 个夹具验证每条规则能触发。
+- `docs/skill-spec.md`：skill 目录规范。第 1–3 节为 agentskills 原规范，第 4 节为 oGRAC 命名规则（`ograc-<动词>-<对象>`、动词词表、只用 `-`、≤ 32 字符、禁版本号与 `helper` 类词），含正反例与存量改名对照。
+- `ci/check_skills.py`：按 agentskills 规范加 oGRAC 命名规则校验 skill 目录（`name` 与目录同名、命名字符、`description` 长度、`metadata` 值类型、入口文件名、500 行建议、引用层级、前缀/动词/连接符/长度/禁用词），支持 `--spec-only` 只查上游规范；已用 21 个夹具验证每条规则能触发。
 - `docs/migration-map.md`：目录迁移与整改清单，含责任人与验收标准。
 - 目录骨架：`skills/`、`tools/`、`vendor/`、`docs/`。
 - `common-scripts/README.md`：补齐此前无文档的 `ograc_sim_single.sh` 与 `install-two-node.sh` 说明。
