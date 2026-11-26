@@ -1,5 +1,4 @@
-ub_installation_doc/images/包/bios升级用这个里面的/* filter=lfs diff=lfs merge=lfs -text
-ub_installation_doc/images/包/*.tar filter=lfs diff=lfs merge=lfs -text
-ub_installation_doc/images/包/*.tar.gz filter=lfs diff=lfs merge=lfs -text
-ub_installation_doc/images/包/B006/**/*.rpm filter=lfs diff=lfs merge=lfs -text
-ub_installation_doc/images/包/B006/**/*.zip filter=lfs diff=lfs merge=lfs -text
+* text=auto eol=lf
+*.png binary
+*.jar binary
+*.odt binary

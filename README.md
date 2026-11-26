@@ -1,78 +1,63 @@
 # oGRAC-common-tools
 
-oGRAC 定制适配工具管理仓库。
+oGRAC 定制适配的**公共工具与 agent skill** 仓库：可复用的测试 / 运维 / 开发 skill，配套脚本，以及 BenchmarkSQL 的 oGRAC 分支源码。
 
-## 工具清单
+仓库不含二进制依赖与固件包：Java 依赖按 [`BUILD.md`](vendor/benchmarksql_ograc/BUILD.md) 本地获取，整机固件见 [`docs/ub-installation/firmware-README.md`](docs/ub-installation/firmware-README.md)。
 
-### ograc-docs-review
-
-oGRAC 中文文档低级错误检视与修复 skill。
-
-- 作用：自动扫描 `docs/zh/` 下 Markdown（含 `_toc.yaml`），按规则修复错别字、产品命名不一致、中英文混排空格、行内代码缺失、SQL 关键字大小写、Markdown 格式、口语化表述、Shell 代码块可复制性、弯引号等。
-- 触发：在 OpenCode 中处理「检视/审校/修复/规范化 docs/zh 文档」「文档低级错误」「文档格式检查」「清理口语化」「PR 文档自检」「同步官方文档前批量检查」或任何涉及 oGRAC 中文文档质量批处理的任务时，agent 会自动加载本 skill。
-- 使用：将 `ograc-docs-review/` 目录复制到 `.opencode/skills/ograc-docs-review/` 或 `.agents/skills/ograc-docs-review/` 下即可生效。
-- 规则文件：`ograc-docs-review/references/ograc_rules.json`
-
-### ograc_sim_single
-
-单文件创建 oGRAC 单集群 LUN 开发环境（4 个 LUN，每个 LUN 两条 loopback 路径）。
-
-- 作用：在 Docker 容器内启动双节点主集群，支持 `status`、`verify`、SQL 登录、重启和清理等常用操作。
-- 特点：脚本内嵌 Dockerfile 与 CMS `cluster.sh`，不依赖 `docker/lun-sim/` 下的其他文件；复制到 oGRAC 源码树任意目录即可运行。
-- 位置：`common-scripts/ograc_sim_single.sh`
-
-前置条件：
-
-- 宿主机安装 Docker，并支持 LIO/configfs、`tcm_loop`、`sg3_utils`。
-- oGRAC 源码树包含 `build/build_ograc.sh`；编译时还需三方库，默认搜索源码根目录及 `third_party/`，也可设置 `THIRD_PARTY_PATH`。
-- `install` 需要 `package/oGRAC-*.tgz` 部署包；如果已有合适部署包，可跳过 `make`。
-
-使用：
+## 快速开始
 
 ```bash
-cp common-scripts/ograc_sim_single.sh /path/to/oGRAC/
-cd /path/to/oGRAC
-
-sudo bash ./ograc_sim_single.sh create         # 创建 LUN、镜像和容器
-sudo bash ./ograc_sim_single.sh init           # 安装容器内编译依赖
-sudo bash ./ograc_sim_single.sh make debug     # 编译（已有部署包时可跳过）
-sudo bash ./ograc_sim_single.sh install debug  # 安装双节点
-sudo bash ./ograc_sim_single.sh start
-sudo bash ./ograc_sim_single.sh verify
+git clone https://gitcode.com/opengauss/oGRAC-common-tools.git
+cd oGRAC-common-tools
+ci/check_repo.sh          # 本地自检（全部检查）
 ```
 
-常用命令：
+### 使用某个 skill
+
+skill 目录可以直接复制到 agent 的 skills 目录（`.claude/skills/`、`.opencode/skills/`、`.agents/skills/` 或 `~/.codex/skills/`），入口固定为 `<skill>/SKILL.md`：
 
 ```bash
-sudo bash ./ograc_sim_single.sh status
-sudo bash ./ograc_sim_single.sh sql 0 "SELECT OPEN_STATUS FROM DV_DATABASE;"
-sudo bash ./ograc_sim_single.sh login 0
-sudo bash ./ograc_sim_single.sh stop
-sudo bash ./ograc_sim_single.sh restart
-sudo bash ./ograc_sim_single.sh log 100
-sudo bash ./ograc_sim_single.sh destroy
+cp -r skills/ograc-deploy-two-node ~/.codex/skills/
 ```
 
-默认环境目录为 `/home/<用户>/ogracsim_single/cluster`，容器名为 `ograc-dev-<用户>`，默认端口为 CMS `18520/18521`、DSS `19100/19101`、oGRAC `19300/19301`。
+## 目录索引
 
-### security-developing-skills
+| 路径 | 内容 | 责任人 |
+|---|---|---|
+| [`skills/ograc-deploy-two-node/`](skills/ograc-deploy-two-node/SKILL.md) | 两节点集群构建、安装、启动、验证 | zhangzq131 |
+| [`skills/ograc-restore-cold-backup/`](skills/ograc-restore-cold-backup/SKILL.md) | `dsscmd cp` 冷备与整实例恢复 | zhangzq131 |
+| [`skills/ograc-prepare-tpcc-data/`](skills/ograc-prepare-tpcc-data/SKILL.md) | TPC-C 数据准备（默认 100 仓） | zhangzq131 |
+| [`skills/ograc-run-process-fault-longrun/`](skills/ograc-run-process-fault-longrun/SKILL.md) | 进程故障长稳流水线 | zhangzq131 |
+| [`skills/ograc-develop-from-design/`](skills/ograc-develop-from-design/SKILL.md) | 设计文档驱动开发（GBP/UB） | shirley_zhengx |
+| [`skills/ograc-review-pr/`](skills/ograc-review-pr/SKILL.md) | GitCode PR 行级检视 | shirley_zhengx |
+| [`skills/ograc-review-docs/`](skills/ograc-review-docs/SKILL.md) | 中文文档低级错误检视与修复 | luodongxu |
+| [`tools/`](tools/README.md) | 会话外工具（单机 LUN 模拟环境） | zhangzq131 |
+| [`vendor/benchmarksql_ograc/`](vendor/benchmarksql_ograc/README.md) | BenchmarkSQL 5.0 的 oGRAC 分支，只保留源码 + [`BUILD.md`](vendor/benchmarksql_ograc/BUILD.md) | hwworkholic |
+| [`docs/ub-installation/`](docs/ub-installation/安装UB流程.md) | 整机 OS 安装 + 固件升级手册；固件包已拆出 | huan |
+| [`docs/`](docs/README.md) | 跨工具文档；skill 规范见 [`docs/skill-spec.md`](docs/skill-spec.md) | huan |
+| [`ci/`](CONTRIBUTING.md) | 仓库自检脚本 | zhangzq131 |
+| [`.gitcode/workflows/`](.gitcode/workflows/gate.yml) | GitCode Actions 流水线：PR 与 push 到 master 时跑 `ci/check_repo.sh` | zhangzq131 |
 
-安全研发技能归档。
+skill 的命名、字段与摆放规则见 [`docs/skill-spec.md`](docs/skill-spec.md)，校验入口 `python3 ci/check_skills.py`。
 
-- 作用：存放可复用的安全研发技能。当前包含：
-  - `opengauss-secret-scan`：扫描 openGauss 公开主仓历史提交中的 AK/SK、GitCode/Gitee access_token、OBS 访问密钥和大模型 API Key，并只读核验是否仍有效。说明见 `security-developing-skills/opengauss-secret-scan/README.md`。
-  - `opengauss-third-party-cve`：给定 openGauss-third_party 仓库和 issue，排查 master、7.0.0、6.0.0，修复受影响分支并编译验证，只在本地 bugfix 分支提交。用法见 `security-developing-skills/opengauss-third-party-cve/README.md`。
-- 使用：将对应技能目录复制到 Cursor、OpenCode 或 `~/.codex/skills/` 后，按该目录里的 `SKILL.md` 运行。
-- 注意：secret-scan 的报告含密钥原文，只留本地，不要提交进 git。
+### 已迁出的内容
 
-### ograc-skills
+| 内容 | 现在位置 | 原因 |
+|---|---|---|
+| 安全研发 skill（`opengauss-secret-scan`、`opengauss-third-party-cve`） | 独立仓库 `openGauss-security-skills` | 与 oGRAC 工具不同生命周期（2026-11-26 拆出） |
+| 整机固件与 UB 软件包（111 个文件，约 231 MiB） | 独立包 `oGRAC-firmware-packages`，清单见 [`firmware-manifest.md`](docs/ub-installation/firmware-manifest.md) | 二进制不入代码仓（2026-11-26 拆出） |
+| BenchmarkSQL 的 jar 与构建产物 | 不再入库，按 [`BUILD.md`](vendor/benchmarksql_ograc/BUILD.md) 本地构建 | 只保留源码 |
+| 两节点部署旧脚本 `install-two-node.sh` | 已删除，内容仍在 git 历史 | 与 `skills/ograc-deploy-two-node` 重复且传明文口令 |
 
-oGRAC 测试与运维技能集（环境无关版本）。
+## 规范与门禁
 
-- 作用：提供 oGRAC 两节点集群部署/构建、冷备恢复、TPC-C 数据准备、进程故障长稳测试等可复用 skill；主机、用户、LUN、路径等环境参数全部由使用者通过环境变量传入。
-- 使用：将 `ograc-skills/<skill>/` 复制到 agent 的 skills 目录（如 `.claude/skills/`、`.opencode/skills/`、`.agents/skills/`），按该目录的 `SKILL.md` 执行。
-- 说明：见 `ograc-skills/README.md`。
+- 新增或修改 skill、脚本、二进制前，先读 [`CONTRIBUTING.md`](CONTRIBUTING.md)；**新增文件放哪个目录**见 [`docs/pr-guide.md`](docs/pr-guide.md)；skill 的字段、命名与摆放规范见 [`docs/skill-spec.md`](docs/skill-spec.md)。
+- 提交前跑 `ci/check_repo.sh`（9 项：语法、索引、密钥、skill 规范、文件归位、断链、LFS 指针、可执行位）；只要快速语法检查时用 `ci/check_repo.sh --quick`。
+- 同一套检查在流水线里跑：[`.gitcode/workflows/gate.yml`](.gitcode/workflows/gate.yml)，PR 提交与更新时自动执行。
+- 每项整改的负责人、验收标准和进度见 [`docs/migration-map.md`](docs/migration-map.md)。
+- 变更记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 ## 许可证
 
-MulanPSL-2.0
+木兰宽松许可证，第 2 版（MulanPSL-2.0），见 [LICENSE](LICENSE)。
+`vendor/benchmarksql_ograc/` 为第三方项目的分支，遵循其上游许可，见 [`NOTICE.md`](vendor/benchmarksql_ograc/NOTICE.md)。
