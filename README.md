@@ -33,7 +33,7 @@ cp -r ograc-skills/ograc-two-node-deploy ~/.codex/skills/
 | [`skills/`](skills/README.md) | 目标 skill 归集目录 | 骨架，迁移中 | 各 skill 责任人 |
 | [`tools/`](tools/README.md) | 目标工具目录 | 骨架，迁移中 | zhangzq131 |
 | [`vendor/`](vendor/README.md) | 第三方分支目录 | 已启用 | hwworkholic |
-| [`docs/`](docs/README.md) | 跨工具文档目录 | 已启用 | huan |
+| [`docs/`](docs/README.md) | 跨工具文档；skill 规范见 [`docs/skill-spec.md`](docs/skill-spec.md) | 已启用 | huan |
 | [`ci/`](CONTRIBUTING.md) | 仓库自检脚本 | 已可用 | zhangzq131 |
 
 ### 已迁出的内容
@@ -46,8 +46,8 @@ cp -r ograc-skills/ograc-two-node-deploy ~/.codex/skills/
 
 ## 规范与门禁
 
-- 新增或修改 skill、脚本、二进制前，先读 [`CONTRIBUTING.md`](CONTRIBUTING.md)。
-- 提交前跑 `ci/check_repo.sh`；整改收尾后加 `--strict` 并接入流水线。
+- 新增或修改 skill、脚本、二进制前，先读 [`CONTRIBUTING.md`](CONTRIBUTING.md)；skill 目录的字段与结构规范见 [`docs/skill-spec.md`](docs/skill-spec.md)。
+- 提交前跑 `ci/check_repo.sh`；skill 单独校验用 `python3 ci/check_skills.py`；整改收尾后加 `--strict` 并接入流水线。
 - 每项整改的负责人、验收标准和进度见 [`docs/migration-map.md`](docs/migration-map.md)。
 - 变更记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 

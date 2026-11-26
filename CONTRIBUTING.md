@@ -24,21 +24,17 @@ ci/                       仓库自检
 
 ## 2. Skill 规范
 
-- 目录名一律 **小写 kebab-case、纯 ASCII**，例如 `ograc-two-node-deploy`。
-- 入口文件名必须是 **`SKILL.md`**（全大写）。文件名里带别的前缀（如 `xxx_SKILL.md`）会导致加载器**完全扫不到**该 skill。
-- frontmatter 至少包含：
+遵循 agentskills 规范。完整的字段约束、渐进披露建议、常见违规与修法见 [`docs/skill-spec.md`](docs/skill-spec.md)，提交前跑：
 
-  ```yaml
-  ---
-  name: ograc-two-node-deploy        # 必须与目录名一致，全仓唯一
-  description: >-                    # 中文触发词 + 英文关键词，写清"何时使用"
-    ...
-  ---
-  ```
+```bash
+python3 ci/check_skills.py
+```
 
-- 可选字段：`license: MulanPSL-2.0`、`compatibility`、`metadata.version`、`disable-model-invocation`。
-- `SKILL.md` 是本 skill 的**唯一真源**：何时使用、环境参数、执行步骤、故障速查都写在这里；`references/` 放细节，`README.md` 只写跳转。
-- 同一份说明不得在根 README、目录 README、`SKILL.md` 中各写一遍。
+本仓在此之上的附加约定只有三条：
+
+- **归位**：skill 目录最终放在 `skills/<name>/`；迁移期 `ograc-skills/`、`ograc-docs-review/` 同样受规范约束。
+- **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。
+- **扩展字段**：可以使用 `disable-model-invocation` 这类上游未定义的字段，但校验会报 `WARN`，需要在 PR 说明理由。
 
 ## 3. 脚本规范
 
@@ -78,7 +74,8 @@ ci/                       仓库自检
 
 ```bash
 ci/check_repo.sh            # 当前应通过的检查：shell 语法、Python 3 语法、README 索引、明文密钥
-ci/check_repo.sh --strict   # 整改目标：额外检查 skill 目录规范、Markdown 断链、LFS 指针、可执行位
+ci/check_repo.sh --strict   # 整改目标：额外检查 skill 规范、Markdown 断链、LFS 指针、可执行位
+python3 ci/check_skills.py  # 只跑 skill 规范校验（agentskills）
 ```
 
 `--strict` 在 `docs/migration-map.md` 的整改项关闭后设为默认，并接入 GitCode 流水线。

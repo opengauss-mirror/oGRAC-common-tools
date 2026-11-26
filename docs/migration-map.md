@@ -20,6 +20,7 @@
 | R12 | 换行不统一 | 两份 UB 文档转 LF；固件目录名保持原样（随包移出） | huan |
 | **新** | 示例配置泄露凭据 | `run/ograc_run.og`、`run/props.sharding`、`run/props.proxy` 中的真实内网地址与明文口令替换为占位符；`run/loop111test.sh` 的 expect 口令改为环境变量（`OS_PWD`、`OGRAC_SYS_PWD`、`NODE0`）；记录在 `vendor/benchmarksql_ograc/UPSTREAM.md` | hwworkholic |
 | — | 凭据扫描补强 | `ci/check_repo.sh` 除 `password=` 与 `jdbc://IPv4` 外，新增 expect `send` 明文口令检测 | zhangzq131 |
+| — | skill 规范文档与门禁 | 新增 `docs/skill-spec.md`（agentskills 规范落地版）与 `ci/check_skills.py`（字段、命名、目录结构校验），接入 `--strict` | zhangzq131 |
 
 ## 二、待办
 
@@ -32,6 +33,7 @@
 | S3 | 安全仓远端 | 独立仓只有本地初始提交 | 在 GitCode 建仓并推送，通知使用方改地址 | congzhou2603 | 远端可克隆，两个 SKILL.md 可加载 | P1 |
 | R6 | 孤儿部署脚本 | `install-two-node.sh` 858 行、权限 644、无引用、与 `ograc-two-node-deploy` 重复 | 删除或移入 `tools/legacy/` | jyn88 | `--strict` 的「可执行位」项转绿 | P1 |
 | R7 | skill 目录不合规 | `ograc-skills/ograc-dev-design/` 无 `SKILL.md`，4 个文件里 2 个声明同一 `name`，`代码检视SKILL.md` 与外部 `gitcode-pr-review` 重名，链接 `gitcode-api.md` 不存在 | 合并为 `SKILL.md` + `references/`，检视 skill 独立成目录，修断链 | shirley_zhengx | `--strict` 的 skill 规范与断链两项转绿 | P1 |
+| R13 | skill 不符合 agentskills 规范 | `ci/check_skills.py` 基线：6 个 skill，5 合规，1 违规（`ograc-dev-design` 无 `SKILL.md`，实际为三个 `*SKILL.md`）。规范见 [`skill-spec.md`](skill-spec.md) | 按规范拆分：`SKILL.md` 与目录同名、`code-review` 独立成目录 | shirley_zhengx | `python3 ci/check_skills.py` 退出码 0 | P1 |
 | R10 | 门禁未进流水线 | `ci/check_repo.sh` 只在本地跑 | 整改项关闭后把 `--strict` 设为默认并接入 GitCode 流水线 | zhangzq131 | 断链、LFS 指针、不合规目录能报红 | P1 |
 | M1 | `ograc-skills/ograc-two-node-deploy/` | 位置未变 | 迁 `skills/ograc-two-node-deploy/` | zhangzq131 | 引用全部更新，`ci` 通过 | P2 |
 | M2 | `ograc-skills/ograc-cold-restore/` | 位置未变 | 迁 `skills/ograc-cold-restore/` | zhangzq131 | 同上 | P2 |
@@ -47,6 +49,6 @@
 
 1. **S1、R2、R3**：安全项，先止血再谈结构。
 2. **S2、S3**：两个已拆出资产补齐远端与实体文件，别让拆分停在半路。
-3. **R7 → M5、R6 → M10**：先合规再迁移。
+3. **R7、R13 → M5、R6 → M10**：先合规再迁移。
 4. **M1–M4、M6、M9**：四个 ograc skill 与 sim 脚本归位，一次一个 PR。
 5. **R8、R10**：文档收敛后把 `--strict` 设为默认并接入流水线。

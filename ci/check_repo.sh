@@ -3,7 +3,7 @@
 #
 # 用法: ci/check_repo.sh [--strict]
 #   默认模式: shell 语法、Python 3 语法、README 目录索引、明文密钥。
-#   --strict : 额外检查 skill 目录规范、Markdown 断链、未展开的 LFS 指针、脚本可执行位。
+#   --strict : 额外检查 skill 规范（agentskills）、Markdown 断链、未展开的 LFS 指针、脚本可执行位。
 #
 # 整改项与责任人见 docs/migration-map.md。
 set -uo pipefail
@@ -107,40 +107,8 @@ check_secrets() {
     return $rc
 }
 
-check_skill_layout() {
-    local rc=0 base d name list dup
-    list=$(mktemp) || return 1
-    for base in ograc-skills security-developing-skills skills ograc-docs-review; do
-        [ -d "$base" ] || continue
-        if [ -f "$base/SKILL.md" ]; then
-            name=$(sed -n 's/^name:[[:space:]]*//p' "$base/SKILL.md" | head -1 | sed "s/^[\"']//; s/[\"']\$//")
-            grep -q '^description:' "$base/SKILL.md" || { printf 'SKILL.md 缺 description: %s/SKILL.md\n' "$base"; rc=1; }
-            [ -n "$name" ] && printf '%s\t%s\n' "$name" "$base" >> "$list"
-            continue
-        fi
-        for d in "$base"/*/; do
-            [ -d "$d" ] || continue
-            d=${d%/}
-            if [ ! -f "$d/SKILL.md" ]; then
-                printf '缺少 SKILL.md: %s/\n' "$d"
-                rc=1
-                continue
-            fi
-            name=$(sed -n 's/^name:[[:space:]]*//p' "$d/SKILL.md" | head -1 | sed "s/^[\"']//; s/[\"']\$//")
-            if [ -z "$name" ]; then
-                printf 'SKILL.md 缺 name: %s/SKILL.md\n' "$d"
-                rc=1
-            fi
-            grep -q '^description:' "$d/SKILL.md" || { printf 'SKILL.md 缺 description: %s/SKILL.md\n' "$d"; rc=1; }
-            [ -n "$name" ] && printf '%s\t%s\n' "$name" "$d" >> "$list"
-        done
-    done
-    while IFS= read -r dup; do
-        printf 'skill name 重复: %s\n' "$dup"
-        rc=1
-    done < <(cut -f1 "$list" | sort | uniq -d)
-    rm -f "$list"
-    return $rc
+check_skills() {
+    python3 ci/check_skills.py
 }
 
 check_markdown_links() {
@@ -181,7 +149,7 @@ run_check "README 目录索引完整性" check_readme_index
 run_check "明文密钥扫描" check_secrets
 
 if [ "$strict" -eq 1 ]; then
-    run_check "skill 目录规范" check_skill_layout
+    run_check "skill 规范（agentskills）" check_skills
     run_check "Markdown 链接" check_markdown_links
     run_check "LFS 指针已展开" check_lfs_pointers
     run_check "脚本可执行位" check_exec_bits
