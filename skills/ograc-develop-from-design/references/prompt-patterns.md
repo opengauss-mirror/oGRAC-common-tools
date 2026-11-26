@@ -2,7 +2,7 @@
 
 本文整理「设计文档 + 提示词 → 代码」的实际工作方式，材料来自：
 
-对应开发 skill：[`design_driven_dev_SKILL.md`](design_driven_dev_SKILL.md)
+对应开发 skill：[`../SKILL.md`](../SKILL.md)
 
 ---
 
@@ -128,10 +128,9 @@ perf 热点在 <符号>。分析是否每次都读远端布局/反复加锁；
 | 文件 | 说明 |
 |------|------|
 | `代码pr连接.txt` | 相关 PR 链接 |
-| `代码检视SKILL.md` | GitCode 行级检视 skill |
-| `prompt开发模式总结.md` | 本文 |
-| `design_driven_dev_SKILL.md` | 设计文档驱动开发 skill |
-| `设计文档驱动开发SKILL.md` | 开发 skill 入口索引 |
+| `../ograc-review-pr/SKILL.md` | GitCode 行级检视 skill |
+| `prompt-patterns.md` | 本文 |
+| `../SKILL.md` | 设计文档驱动开发 skill |
 
 PR 示例：
 

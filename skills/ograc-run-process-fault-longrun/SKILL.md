@@ -1,5 +1,5 @@
 ---
-name: ograc-process-fault-longrun
+name: ograc-run-process-fault-longrun
 description: 进程故障长稳测试流水线：持续执行冷备恢复 + 全冲突 TPC-C + 随机进程 SIGKILL + 故障恢复验证，测试最新代码的二进制；默认无限轮次一直跑，失败时只定位原因并记录现场，不修改代码、不部署修复。
 ---
 
@@ -48,7 +48,7 @@ description: 进程故障长稳测试流水线：持续执行冷备恢复 + 全�
 |---|---|
 | `controller_perf_randomkill.sh` | 启动 100 仓全冲突 TPC-C，warmup 后在 T0+120..180s 随机 SIGKILL 目标节点，等待 survivor GBP recovery reset，继续观察吞吐；写 `controller.out/log`、`summary.txt`、`markers.log`，成功返回 0 |
 | `check_random_round.sh` | 读取本轮目录与目标节点，校验恢复是否完成；写 `check.out/log`，最后一行 `ROUND_VERDICT=...`，成功返回 0 |
-| `restore_instance_from_cold_backup.sh` | 来自 `ograc-cold-restore` skill，负责每轮冷备恢复 |
+| `restore_instance_from_cold_backup.sh` | 来自 `ograc-restore-cold-backup` skill，负责每轮冷备恢复 |
 
 控制台（driver 管理）可选：任何能 `start --long`、`status`、`watch`、`stop` 的包装脚本；本文以 `$PIPE/pipelinectl` 为例。
 
@@ -63,7 +63,7 @@ description: 进程故障长稳测试流水线：持续执行冷备恢复 + 全�
 
 ### 1. 构建并部署最新二进制
 
-按 `ograc-two-node-deploy` skill 的模式 B（停机刷新 `ogracd` + `server/lib/*.so`）部署，并记录：
+按 `ograc-deploy-two-node` skill 的模式 B（停机刷新 `ogracd` + `server/lib/*.so`）部署，并记录：
 
 - git commit、build 日志、安装后 `ogracd`/`libograc.so` 的 sha256；
 - 若 DSS/CMS 源码也变了，一并刷新。
@@ -156,6 +156,6 @@ $PIPE/pipelinectl stop --with-cluster # 同时停 DB/CMS/DSS
 ## 参考
 
 - 失败分类与记录模板：`references/failure-triage.md`
-- 冷备恢复：`ograc-cold-restore` skill
-- 部署/二进制刷新：`ograc-two-node-deploy` skill
-- TPC-C 数据：`tpcc-prepare-data` skill
+- 冷备恢复：`ograc-restore-cold-backup` skill
+- 部署/二进制刷新：`ograc-deploy-two-node` skill
+- TPC-C 数据：`ograc-prepare-tpcc-data` skill

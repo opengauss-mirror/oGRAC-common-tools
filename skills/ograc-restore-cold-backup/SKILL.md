@@ -1,5 +1,5 @@
 ---
-name: ograc-cold-restore
+name: ograc-restore-cold-backup
 description: 用 dsscmd cp 冷备/恢复 oGRAC 实例（不走 ogbackup 在线备份链）。用于干净停机后的数据基线备份、整实例回拷、TPC-C 数据回滚，以及排查 ctrl 尺寸、DSS 假死、SCSI PR/启动顺序问题。
 ---
 
@@ -32,7 +32,7 @@ description: 用 dsscmd cp 冷备/恢复 oGRAC 实例（不走 ogbackup 在线�
 | `DATA_DEV`/`REDO_DEV`/`ARCH_DEV`/`GCC_DEV` | 清 PR 时必填 | — | 四个 LUN 的 `/dev/disk/by-id/...` 路径 |
 | `SUDO_PWD_FILE` | 否 | `$HOME/.spw` | 仅用于停库/清 PR/setcap 的 sudo 密码文件（600） |
 | `DSS_HOME` | 否 | `$ROOT/ograc/dss` | DSS 安装目录 |
-| `TPCC_SKILL` | 否 | 同级的 `tpcc-prepare-data` skill | 恢复后行数校验 |
+| `TPCC_SKILL` | 否 | 同级的 `ograc-prepare-tpcc-data` skill | 恢复后行数校验 |
 
 数据布局示例：`+vg1` 放 data/undo/temp/ctrl，`+vg2` 放 redo（每节点 5 × 10G，共 10 个文件）。VG 名称按你的安装配置填写。
 

@@ -232,7 +232,7 @@ def main(argv):
             roots.append(argv[idx + 1])
     roots_from_cli = bool(roots)
     if not roots:
-        roots = ["skills", "ograc-skills"]
+        roots = ["skills"]
         roots += sorted(
             entry
             for entry in os.listdir(".")

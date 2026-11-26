@@ -1,0 +1,5 @@
+# GitCode 凭据文件只留本地，禁止入库
+gitcode_auth.json
+gitcode_account.txt
+.github_token
+*.token

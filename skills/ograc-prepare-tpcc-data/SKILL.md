@@ -1,5 +1,5 @@
 ---
-name: tpcc-prepare-data
+name: ograc-prepare-tpcc-data
 description: 为 oGRAC 测试集群准备 TPC-C 数据（默认 100 仓）：检查/创建 TPCC 用户、生成 BenchmarkSQL props、建表分区、并行装载、创建索引并校验行数。用于首次导入、重建 TPCC 数据或为新代码测试准备压测基线。
 ---
 

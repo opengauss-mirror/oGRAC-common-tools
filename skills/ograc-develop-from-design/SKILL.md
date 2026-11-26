@@ -1,5 +1,5 @@
 ---
-name: ograc-design-driven-dev
+name: ograc-develop-from-design
 description: >-
   按设计文档与约束型 Prompt 开发 oGRAC GBP/UB 相关代码。对照 ograc_master 基线、
   enable_ubsmem 门闩、最小改动、gbp 命名与错误号区分。在用户提到设计文档、
@@ -16,7 +16,7 @@ disable-model-invocation: true
 - 要求「对照 ograc_master」「UB 打开才走」「加 gbp 关键字」
 - 先方案后实现、排障但不擅自碰活集群
 
-Prompt 习惯总览见同目录：[`prompt开发模式总结.md`](prompt开发模式总结.md)
+Prompt 习惯总览见 [`references/prompt-patterns.md`](references/prompt-patterns.md)
 
 ## 硬性规则
 
@@ -107,5 +107,5 @@ GBP 相关函数加 gbp；GBP 重试用 ERR_GBP_MSG_EAGAIN 并注释场景。
 
 ## 与检视 skill 的关系
 
-合入前行级检视用同目录 [`代码检视SKILL.md`](代码检视SKILL.md)。  
+合入前行级检视用 `ograc-review-pr` skill。  
 本 skill 管「怎么按设计写出正确小改动」；检视 skill 管「怎么在 GitCode PR 上挂行评」。

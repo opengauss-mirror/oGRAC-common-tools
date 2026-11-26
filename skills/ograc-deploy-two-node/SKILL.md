@@ -1,5 +1,5 @@
 ---
-name: ograc-two-node-deploy
+name: ograc-deploy-two-node
 description: 构建、安装、启动、验证 oGRAC 两节点测试集群（release with debug info + UB 串行刷盘参数）。用于部署新代码、全量重装、停机增量刷新已安装二进制，或按验证过的顺序重启与排查启动问题。
 ---
 

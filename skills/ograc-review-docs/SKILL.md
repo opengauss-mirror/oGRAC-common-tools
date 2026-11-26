@@ -1,5 +1,5 @@
 ---
-name: ograc-docs-review
+name: ograc-review-docs
 description: 检视并修复 oGRAC 官方中文文档（docs/zh）的低级错误：错别字、产品命名不一致、中英文混排空格、行内代码缺失、SQL 关键字大小写、Markdown 格式、口语化表述、Shell 代码块可复制性、弯引号等。当用户提到「检视/审校/修复/规范化 docs/zh 文档」「文档低级错误」「文档格式检查」「清理口语化」「PR 文档自检」「同步官方文档前批量检查」或任何涉及 oGRAC 中文文档质量批处理的任务时，必须优先调用本 skill。
 license: MulanPSL-2.0
 compatibility: opencode

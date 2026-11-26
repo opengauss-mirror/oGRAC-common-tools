@@ -1,5 +1,5 @@
 ---
-name: gitcode-pr-review
+name: ograc-review-pr
 description: >-
   登录 GitCode 对 Pull Request 做行级代码检视并发布评论。要求挂到 Files 对比的右侧改动行，
   评论统一为「[问题描述]/[修改建议]」格式。在用户要求检视 PR、GitCode review、行内评论、
@@ -36,7 +36,7 @@ description: >-
 
 ## 账号与认证
 
-按优先级读取（路径相对本 skill 目录 `.cursor/skills/gitcode-pr-review/`）：
+按优先级读取（路径相对本 skill 目录 `skills/ograc-review-pr/`）：
 
 1. `gitcode_auth.json` → `token`、`username`、`api_base`（默认 `https://api.gitcode.com/api/v5`）
 2. 若无 auth JSON：从同目录 `gitcode_account.txt`（或仓库 `docs/gitcode_account.txt`）解析 username/token，并写回本目录 `gitcode_auth.json`（仅本地）
@@ -135,4 +135,4 @@ DELETE {api_base}/repos/{owner}/{repo}/pulls/comments/{id}
 
 ## 更多
 
-- API 细节与踩坑：见 [gitcode-api.md](gitcode-api.md)
+- API 细节与踩坑：用 `gc api <endpoint>` 调 GitCode REST 接口，端点见 GitCode 帮助中心（`docs.gitcode.com`）；本 skill 只依赖上列四个端点。

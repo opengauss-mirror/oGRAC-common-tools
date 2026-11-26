@@ -19,4 +19,4 @@
 
 使用本分支源码编译后，两节点各自压测的数据冲突率接近 0。
 
-配套 skill：[`tpcc-prepare-data`](../../ograc-skills/tpcc-prepare-data/SKILL.md)（迁移到 `skills/` 后本链接同步更新）。
+配套 skill：[`ograc-prepare-tpcc-data`](../../skills/ograc-prepare-tpcc-data/SKILL.md)（迁移到 `skills/` 后本链接同步更新）。

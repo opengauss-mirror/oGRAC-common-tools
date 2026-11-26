@@ -34,7 +34,7 @@ CMS_HOME=$ROOT/ograc/cms
 CMS_ACTION=$ROOT/ograc/action/cms
 DB_BIN=$ROOT/ograc/ograc/server/bin
 UB_LIB=/usr/local/ubs_mem/lib
-TPCC_SKILL=${TPCC_SKILL:-$(cd "$SKILL_DIR/../tpcc-prepare-data" 2>/dev/null && pwd)}
+TPCC_SKILL=${TPCC_SKILL:-$(cd "$SKILL_DIR/../ograc-prepare-tpcc-data" 2>/dev/null && pwd)}
 WAREHOUSES=${WAREHOUSES:-100}
 SUDO_PWD_FILE=${SUDO_PWD_FILE:-$HOME/.spw}
 # Bounded clean shutdown.  A GBP-quarantined DB loops in reform and never
