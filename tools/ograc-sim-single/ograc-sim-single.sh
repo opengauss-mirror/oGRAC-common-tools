@@ -18,6 +18,11 @@ if shopt -qo posix 2>/dev/null; then exec /bin/bash "$0" "$@"; fi
 set -euo pipefail
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}" 2>/dev/null || realpath "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "${SCRIPT_PATH}")" && pwd)"
+# 数据库 sys 口令：优先用环境变量，未设置时随机生成（写入部署用户的 .sys_pw，权限 600）
+SYS_PASSWORD="${OGRAC_SYS_PASSWORD:-}"
+if [ -z "${SYS_PASSWORD}" ]; then
+    SYS_PASSWORD="$(od -An -N8 -tx1 /dev/urandom | tr -d ' \n')"
+fi
 is_ograc_src() { [ -f "${1}/build/build_ograc.sh" ] && [ -d "${1}/docker" ]; }
 find_ograc_src() {
     local cand start parent
@@ -263,7 +268,7 @@ as_ograc_bg_pid() {
 ensure_deploy_user() {
     groupadd -g 9015 "${DEPLOY_USER}" 2>/dev/null || true
     id -u "${DEPLOY_USER}" >/dev/null 2>&1 || useradd -u 9015 -g 9015 -m -s /bin/bash -d "/home/${DEPLOY_USER}" "${DEPLOY_USER}" 2>/dev/null || true
-    mkdir -p "/home/${DEPLOY_USER}" /data; echo -n 'Ograc@12345' > "/home/${DEPLOY_USER}/.sys_pw"
+    mkdir -p "/home/${DEPLOY_USER}" /data; echo -n "${SYS_PASSWORD}" > "/home/${DEPLOY_USER}/.sys_pw"
     chown -R "${DEPLOY_USER}:${DEPLOY_USER}" "/home/${DEPLOY_USER}" /data 2>/dev/null || true; chmod 600 "/home/${DEPLOY_USER}/.sys_pw"
 }
 ensure_ograc_user() {
@@ -273,7 +278,7 @@ ensure_ograc_user() {
     [ -f /home/ograc/.bashrc ] || cp /etc/skel/.bashrc /home/ograc/ 2>/dev/null || touch /home/ograc/.bashrc
     sed -i -E '/DSS_HOME|CMS_HOME|GCC_HOME|OGDB_HOME|OGDB_DATA|ograc1|export (PATH|LD_LIBRARY_PATH)=.*(ogracsim|install\/ograc)/d' \
         /home/ograc/.bashrc "/home/${DEPLOY_USER}/.bashrc" 2>/dev/null || true
-    echo -n 'Ograc@12345' > /home/ograc/.sys_pw; chown -R ograc:ograc /home/ograc 2>/dev/null || true; chmod 600 /home/ograc/.sys_pw
+    echo -n "${SYS_PASSWORD}" > /home/ograc/.sys_pw; chown -R ograc:ograc /home/ograc 2>/dev/null || true; chmod 600 /home/ograc/.sys_pw
     chown -R ograc:ograc "${OGRAC_HOME}/ograc" "${OGRAC_HOME}/cms" "${OGRAC_HOME}/dss" \
         "${OGRAC_HOME1}/ograc" "${OGRAC_HOME1}/cms" "${OGRAC_HOME1}/dss" "${DATA_ROOT}" "${DATA_ROOT1}" 2>/dev/null || true
     chmod 755 "${SIM_BASE}" "${OGRAC_HOME}" "${OGRAC_HOME1}" "${DATA_ROOT}" "${DATA_ROOT1}" 2>/dev/null || true
