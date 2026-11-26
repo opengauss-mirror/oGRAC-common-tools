@@ -50,8 +50,8 @@ skill 的命名、字段与摆放规则见 [`docs/skill-spec.md`](docs/skill-spe
 
 ## 规范与门禁
 
-- 新增或修改 skill、脚本、二进制前，先读 [`CONTRIBUTING.md`](CONTRIBUTING.md)；skill 目录的字段、命名与摆放规范见 [`docs/skill-spec.md`](docs/skill-spec.md)。
-- 提交前跑 `ci/check_repo.sh`（含断链、skill 规范、LFS 指针、可执行位）；只要快速语法检查时用 `ci/check_repo.sh --quick`。
+- 新增或修改 skill、脚本、二进制前，先读 [`CONTRIBUTING.md`](CONTRIBUTING.md)；**新增文件放哪个目录**见 [`docs/pr-guide.md`](docs/pr-guide.md)；skill 的字段、命名与摆放规范见 [`docs/skill-spec.md`](docs/skill-spec.md)。
+- 提交前跑 `ci/check_repo.sh`（9 项：语法、索引、密钥、skill 规范、文件归位、断链、LFS 指针、可执行位）；只要快速语法检查时用 `ci/check_repo.sh --quick`。
 - 每项整改的负责人、验收标准和进度见 [`docs/migration-map.md`](docs/migration-map.md)。
 - 变更记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 

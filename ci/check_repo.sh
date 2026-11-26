@@ -4,7 +4,6 @@
 # 用法: ci/check_repo.sh [--quick]
 #   默认: 全部检查 —— shell/Python 语法、README 索引、明文密钥、skill 规范（agentskills + oGRAC 命名 + 扁平摆放）、Markdown 断链、LFS 指针、可执行位。
 #   --quick: 只跑语法、索引、密钥四项，用于本地快速回路。
-#
 # 整改项与责任人见 docs/migration-map.md。
 set -uo pipefail
 
@@ -112,6 +111,10 @@ check_skills() {
     python3 ci/check_skills.py
 }
 
+check_layout() {
+    python3 ci/check_layout.py
+}
+
 check_markdown_links() {
     python3 ci/check_links.py
 }
@@ -151,6 +154,7 @@ run_check "明文密钥扫描" check_secrets
 
 if [ "$strict" -eq 1 ]; then
     run_check "skill 规范（规范/命名/摆放）" check_skills
+    run_check "文件归位（PR 指引）" check_layout
     run_check "Markdown 链接" check_markdown_links
     run_check "LFS 指针已展开" check_lfs_pointers
     run_check "脚本可执行位" check_exec_bits

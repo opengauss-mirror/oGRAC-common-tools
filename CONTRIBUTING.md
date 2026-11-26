@@ -20,7 +20,7 @@ ci/                       仓库自检
 ```
 
 `security-developing-skills/` 与 `ub_installation_doc/images/包/` 已于 2026-11-26 迁出本仓，不要在本仓重建。
-改动归属由 [`CODEOWNERS`](CODEOWNERS) 按路径声明，与第 8 节的责任人表一一对应。
+改动归属由 [`CODEOWNERS`](CODEOWNERS) 按路径声明，与第 8 节的责任人表一一对应。**新增文件放哪个目录**的对照表见 [`docs/pr-guide.md`](docs/pr-guide.md)，选错会被 `ci/check_layout.py` 拦下。
 
 ## 2. Skill 规范
 
@@ -68,7 +68,9 @@ python3 ci/check_skills.py --spec-only    # 只查上游规范
 
 ## 6. 提交与评审
 
-- 一个 PR 只做一件事（迁移、修复、新增功能分开）。
+按改动类型选目录、以及完整的 PR 清单，见 [`docs/pr-guide.md`](docs/pr-guide.md)。
+
+- 一个 PR 只做一件事（迁移、修复、新增功能分开；`skills/` 与 `vendor/` 的改动不混在一起）。
 - 提交信息沿用仓库习惯：**中文、动词开头、说清做了什么**，例如 `新增 ograc-skills：冷备与实例恢复 skill`、`修复示例配置中的真实地址`。跨模块改动在正文里列出受影响路径。
 - 不直接 push `master`；至少一位模块责任人 review。
 - 迁移类 PR 必须同时更新受影响的链接，保证 `ci/check_repo.sh` 通过。
