@@ -67,14 +67,14 @@ run      scan    sync      test     uninstall upgrade   verify
 
 | 名字 | 判定 | 说明 |
 |---|---|---|
-| `ograc-deploy-two-node` | ✅ | 动词 `deploy` + 对象 `two-node`，22 字符 |
-| `ograc-restore-cold-backup` | ✅ | 27 字符 |
+| `ograc-deploy-two-node` | ✅ | 动词 `deploy` + 对象 `two-node`，21 字符 |
+| `ograc-restore-cold-backup` | ✅ | 25 字符 |
 | `ograc-run-process-fault-longrun` | ✅ | 31 字符，贴近上限 |
 | `ograc-two-node-deploy` | ❌ | 动词在末尾，第二段 `two` 不是动词 |
 | `ograc-docs-review` | ❌ | 第二段 `docs` 是名词；应为 `ograc-review-docs` |
 | `tpcc-prepare-data` | ❌ | 缺 `ograc-` 前缀 |
 | `ograc_dev_single` | ❌ | 用了 `_`，违反 N4 与上游规范 |
-| `ograc-deploy-two-node-cluster-check` | ❌ | 40 字符，超 N5，应拆成两个 skill |
+| `ograc-deploy-two-node-cluster-check` | ❌ | 35 字符，超 N5，应拆成两个 skill |
 | `ograc-install-helper` | ❌ | `helper` 命中 N6 |
 
 ### 4.4 存量改名对照
@@ -83,12 +83,12 @@ run      scan    sync      test     uninstall upgrade   verify
 
 | 现名 | 建议名 | 长度 | 责任人 |
 |---|---|---|---|
-| `ograc-two-node-deploy` | `ograc-deploy-two-node` | 22 | zhangzq131 |
-| `ograc-cold-restore` | `ograc-restore-cold-backup` | 27 | zhangzq131 |
+| `ograc-two-node-deploy` | `ograc-deploy-two-node` | 21 | zhangzq131 |
+| `ograc-cold-restore` | `ograc-restore-cold-backup` | 25 | zhangzq131 |
 | `tpcc-prepare-data` | `ograc-prepare-tpcc-data` | 23 | zhangzq131 |
 | `ograc-process-fault-longrun` | `ograc-run-process-fault-longrun` | 31 | zhangzq131 |
-| `ograc-docs-review` | `ograc-review-docs` | 18 | luodongxu |
-| `ograc-dev-design` | `ograc-develop-from-design` | 26 | shirley_zhengx |
+| `ograc-docs-review` | `ograc-review-docs` | 17 | luodongxu |
+| `ograc-dev-design` | `ograc-develop-from-design` | 25 | shirley_zhengx |
 
 改名命令（以「迁入 `skills/` 的同时改名」为例，其余同理）：
 
