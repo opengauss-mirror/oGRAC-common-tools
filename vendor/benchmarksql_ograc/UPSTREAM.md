@@ -32,8 +32,12 @@
 
 ## 敏感信息清理
 
-`run/ograc_run.og`、`run/props.sharding` 中曾提交过真实内网地址与明文口令，2026-11-26 已替换为
+`run/ograc_run.og`、`run/props.sharding`、`run/props.proxy` 中曾提交过真实内网地址与明文口令，2026-11-26 已替换为
 `<node0_ip>`、`<password>` 等占位符。
+
+`run/loop111test.sh` 是个人调试脚本，曾把节点 root 口令、数据库 sys 口令和节点 IP 写死在 expect 配置里，
+现改为从 `OS_PWD`、`OGRAC_SYS_PWD`、`NODE0` 三个环境变量读取，未设置时直接报错退出。
+该脚本还引用未入库的 `props_111.ograc`，使用前自行准备。
 
 > **注意**：这些值仍存在于拆分前的 git 历史中。涉及的口令必须视为已泄露并轮换；如需彻底清除，
 > 需重写历史，仓库管理员评估后再做。

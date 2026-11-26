@@ -33,7 +33,8 @@
 ### Security
 
 - `vendor/benchmarksql_ograc/run/ograc_run.og`、`run/props.sharding` 中的真实内网地址与明文口令替换为占位符。历史提交中仍可见，**口令需轮换**，见 `UPSTREAM.md`。
-- `ci/check_repo.sh` 新增两类检查：`password=` 后接字面量、`jdbc://` 后接 IPv4 字面量。
+- `vendor/benchmarksql_ograc/run/loop111test.sh` 的 expect 口令改为 `OS_PWD` / `OGRAC_SYS_PWD` / `NODE0` 环境变量，移除写死的节点 IP。
+- `ci/check_repo.sh` 新增三类检查：`password=` 后接字面量、`jdbc://` 后接 IPv4 字面量、expect `send` 明文口令。
 
 ## 2026-11-23
 

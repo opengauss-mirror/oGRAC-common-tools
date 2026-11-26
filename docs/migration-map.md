@@ -18,13 +18,14 @@
 | R5 | 驱动版本混乱 | 删除 `lib/` 下 9 个 jar/tar.gz（含误命名文件），改为按 [`BUILD.md`](../vendor/benchmarksql_ograc/BUILD.md) 本地获取 | hwworkholic |
 | R11 | 上游 Python 2 脚本 | 保留原样，`BUILD.md` 第 8 节标注，`ci` 对该路径豁免 | hwworkholic |
 | R12 | 换行不统一 | 两份 UB 文档转 LF；固件目录名保持原样（随包移出） | huan |
-| **新** | 示例配置泄露凭据 | `run/ograc_run.og`、`run/props.sharding` 中的真实内网地址与明文口令替换为占位符；记录在 `vendor/benchmarksql_ograc/UPSTREAM.md` | hwworkholic |
+| **新** | 示例配置泄露凭据 | `run/ograc_run.og`、`run/props.sharding`、`run/props.proxy` 中的真实内网地址与明文口令替换为占位符；`run/loop111test.sh` 的 expect 口令改为环境变量（`OS_PWD`、`OGRAC_SYS_PWD`、`NODE0`）；记录在 `vendor/benchmarksql_ograc/UPSTREAM.md` | hwworkholic |
+| — | 凭据扫描补强 | `ci/check_repo.sh` 除 `password=` 与 `jdbc://IPv4` 外，新增 expect `send` 明文口令检测 | zhangzq131 |
 
 ## 二、待办
 
 | ID | 事项 | 现状与证据 | 动作 | 责任人 | 验收 | 优先级 |
 |---|---|---|---|---|---|---|
-| S1 | 口令轮换 | 上述口令已进入 git 历史，等同泄露 | 轮换数据库口令；评估是否重写历史 | jyn88（原提交人）+ 仓库管理员 | 旧口令失效；决定记录在 `UPSTREAM.md` | P0 |
+| S1 | 口令轮换 | 上述口令已进入 git 历史，等同泄露（涉 `ograc_run.og`、`props.sharding`、`loop111test.sh`） | 轮换数据库与节点口令；评估是否重写历史 | jyn88（原提交人）+ 仓库管理员 | 旧口令失效；决定记录在 `UPSTREAM.md` | P0 |
 | R2 | 默认口令硬编码 | `common-scripts/ograc_sim_single.sh:276` 写入固定口令 | 改读 `OGRAC_SYS_PASSWORD`，未设则随机生成写 600 文件 | zhangzq131 | 脚本内无口令字面量 | P0 |
 | R3 | 命令行明文口令 | `common-scripts/install-two-node.sh` 的 `--password`、`--node1-root-password` | 脚本已废弃，随 R6 删除 | jyn88 | 文件内无该参数 | P0 |
 | S2 | 固件最终位置 | 当前仅暂存在 `oGRAC-firmware-packages`，77 个 LFS 实体仍未取回 | 取回实体、校验 `firmware.sha256`、确定发布位置并回写 `firmware-README.md` | huan | `sha256sum -c` 全 OK，文档指向最终位置 | P1 |

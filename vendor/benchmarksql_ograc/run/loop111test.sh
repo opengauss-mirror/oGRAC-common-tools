@@ -4,6 +4,10 @@ logfile="./outlog"
 # 可选：如果是长期运行，建议保留一个历史报错日志，防止覆盖
 error_log="./error_snapshot.log"
 
+OS_PWD="${OS_PWD:?需要 OS_PWD：节点登录口令}"
+OGRAC_SYS_PWD="${OGRAC_SYS_PWD:?需要 OGRAC_SYS_PWD：数据库 sys 口令}"
+NODE0="${NODE0:?需要 NODE0：被测节点 IP}"
+
 echo "开始运行基准测试监控..."
 
 function auto_()
@@ -14,12 +18,12 @@ function auto_()
         expect {
             "yes/no" { send "yes\n"; exp_continue }
             "denied" { exit 1; }
-            "*assword:" { send "101demima@@\n"; exp_continue }
+            "*assword:" { send "$OS_PWD\n"; exp_continue }
             "anger*\n*yes*" { send "yes\n"; exp_continue }
             "Pdb" { interact }
-            "pass phrase for*:" { send "101demima@@\n"; exp_continue  }
-            "passphrase" { send "101demima@@\n"; exp_continue  }
-            "ograc_sys_pwd:" { send "Huawei@123\n"; exp_continue  }
+            "pass phrase for*:" { send "$OS_PWD\n"; exp_continue  }
+            "passphrase" { send "$OS_PWD\n"; exp_continue  }
+            "ograc_sys_pwd:" { send "$OGRAC_SYS_PWD\n"; exp_continue  }
         }
         #expect eof
 EOF
@@ -27,7 +31,7 @@ EOF
 
 function all_z_node_ssh_proc()
 {
-    ip=20.20.20.111
+    ip="$NODE0"
     echo "Executing on $ip"
     auto_ ssh root@$ip $*
 }

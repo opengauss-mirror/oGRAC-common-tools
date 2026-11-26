@@ -91,7 +91,7 @@ is_secret_allowlisted() {
     return 1
 }
 
-LITERAL_PAT='^[[:space:]]*password[[:space:]]*=[[:space:]]*[A-Za-z0-9][A-Za-z0-9@#$%^&*!_.+-]{5,}|jdbc:[a-zA-Z]+://([0-9]{1,3}\.){3}[0-9]{1,3}'
+LITERAL_PAT='^[[:space:]]*password[[:space:]]*=[[:space:]]*[A-Za-z0-9][A-Za-z0-9@#$%^&*!_.+-]{5,}|jdbc:[a-zA-Z]+://([0-9]{1,3}\.){3}[0-9]{1,3}|(assword|passphrase|pass phrase|sys_pwd)[^\n]*send[[:space:]]+"[^"$]'
 
 check_secrets() {
     local rc=0 f hit
