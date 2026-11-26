@@ -29,6 +29,7 @@
 | R16 | vendored 许可缺失 | 新增 [`NOTICE.md`](../vendor/benchmarksql_ograc/NOTICE.md)：标明上游未随源码保留许可，禁止按 MulanPSL 再分发；许可证原文仍待补 | hwworkholic |
 | R10 | 门禁未默认 | `ci/check_repo.sh` 默认跑全量检查，`--quick` 保留快速回路；`--strict` 仍兼容 | zhangzq131 |
 | S2 | 固件实体取回 | 77 个 LFS 指针实体已用标准库脚本（LFS 批量接口）全部取回，`sha256sum -c firmware.sha256` → **111 个全部 OK**，包内已无指针 | huan |
+| S3 | 安全仓远端 | 已在 GitCode 建仓 `luodongxu/openGauss-security-skills`（public）并推送，远端 master = `f1be01c` | congzhou2603 |
 
 ## 二、待办
 
@@ -37,7 +38,7 @@
 | G1 | MR #18 待评审合并 | 分支 `refactor/repo-cleanup`，`mergeable: true`，`merge_by_self_passed: true`；未合并前所有整理只在分支上 | 评审后合并，删除分支 | luodongxu（作者）+ zhangzq131（评审） | `opengauss/master` 包含这批提交 | P0 |
 | S1 | 口令轮换 | 旧口令仍在 git 历史（`ograc_run.og`、`props.sharding`、`loop111test.sh`），等同泄露 | 轮换数据库与节点口令；评估是否重写历史 | jyn88（原提交人）+ 仓库管理员 | 旧口令失效；决定记录在 `UPSTREAM.md` | P0 |
 | S2 | 固件发布位置 | 实体已取回并校验（111/111 OK），但最终存放位置未定 | 定独立仓库 / Release 附件 / 制品库，并回写 `firmware-README.md` | huan | 文档指向最终位置，其他人可按文档拿到包 | P1 |
-| S3 | 安全仓远端 | 独立仓只有本地初始提交，`git remote -v` 为空 | 在 GitCode 建仓并推送，通知使用方改地址 | congzhou2603 | 远端可克隆，两个 SKILL.md 可加载 | P1 |
+| S3 | 通知使用方改地址 | 仓已建并推送，但原来引用本仓路径的人还不知情 | 在团队渠道告知新地址，必要时改旧 README 引用 | congzhou2603 | 无人在旧路径上提改动 | P2 |
 | R16 | 补上游许可证原文 | `vendor/benchmarksql_ograc/NOTICE.md` 已说明现状，仍缺许可证本体 | 从上游发布包取出 `LICENSE`/`COPYING` 放到位 | hwworkholic | 目录内有许可文件且 NOTICE 指向它 | P1 |
 | R15 | CODEOWNERS 收尾 | `docs/ub-installation/` 的 owner `huan` 在 GitCode 无同名账号；仓级 `approval_required_reviewers_count=0`，路由不拦截 | 确认 huan 的登录名并补规则；把必需评审数设为 ≥1 | zhangzq131（需 huan 提供账号） | 改到该路径自动请求评审，且未获批不能合 | P1 |
 | R10 | 门禁接入流水线 | 本地已默认全量，但未接 GitCode 流水线 | 按平台 CI 格式接入，PR 必跑 | zhangzq131 | PR 上可见检查结果，失败阻断合并 | P1 |
