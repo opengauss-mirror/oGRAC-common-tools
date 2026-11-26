@@ -1,10 +1,10 @@
 db=postgres
 driver=org.postgresql.OpenGaussDriver
-config=D:\\zhoubin\\code\\benchmarksql-5.0\\run\\config-sharding.yaml
+config=<sharding-config-yaml-path>
 conn=jdbc:opengauss://localhost:5432/postgres?prepareThreshold=1&batchMode=on&detchsize=10&loggerLevel=off
-//conn=jdbc:postgresql://114.115.168.119:40000/ds_0?prepareThreshold=1&batchMode=off&detchsize=10&loggerLevel=off
-user=test
-password=Huawei@123
+//conn=jdbc:postgresql://<host>:<port>/ds_0?prepareThreshold=1&batchMode=off&detchsize=10&loggerLevel=off
+user=<user>
+password=<password>
 
 warehouses=10
 loadWorkers=20

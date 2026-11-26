@@ -1,10 +1,10 @@
 db=postgres
 driver=org.postgresql.Driver
-conn=jdbc:oGRAC://40.0.0.215:1661
+conn=jdbc:oGRAC://<node0_ip>:<port>
 nodeId=0
 nodeCnt=2
 user=TPCC
-password=Huawei@123
+password=<password>
 warehouses=2000
 loadWorkers=100
 terminals=1000
