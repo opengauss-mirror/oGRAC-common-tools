@@ -17,6 +17,7 @@
 - `vendor/benchmarksql_ograc/UPSTREAM.md`：上游基线、本分支改动、已删除文件清单。
 - `docs/ub-installation/firmware-manifest.md`：固件清单（111 个文件、sha256、真实大小）。
 - `docs/ub-installation/firmware-README.md`：固件获取与校验说明。
+- 固件包 `oGRAC-firmware-packages/`：77 个 Git LFS 实体已全部取回（`fetch_lfs.py`，标准库 + LFS 批量接口），`sha256sum -c` 111/111 OK。
 - `CODEOWNERS`：按路径声明 7 个 skill、`tools/`、`vendor/` 与治理文件的评审人；`docs/ub-installation/` 待 huan 的 GitCode 账号确认后补。
 - `vendor/benchmarksql_ograc/NOTICE.md`：标明上游许可未随源码保留，禁止按 MulanPSL 再分发。
 - `skills/ograc-review-pr/`：从 `ograc-dev-design` 拆出的 GitCode PR 行级检视 skill，自带 `.gitignore` 隔离凭据文件。
