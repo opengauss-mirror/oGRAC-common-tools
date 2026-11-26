@@ -35,7 +35,7 @@ python3 ci/check_skills.py --spec-only    # 只查上游规范
 
 - **命名**：`ograc-<动词>-<对象>[-<限定语>]`，第二段必须出自动词词表，只用 `-` 连接，总长 ≤ 32 字符，不带版本号。见 [`docs/skill-spec.md`](docs/skill-spec.md) 第 4 节。
 
-- **归位**：skill 目录最终放在 `skills/<name>/`；迁移期 `ograc-skills/`、`ograc-docs-review/` 同样受规范约束。
+- **摆放**：skill 直接放在 `skills/<name>/`，**不允许二级分组**（没有 `skills/<分类>/<name>`）；迁移期 `ograc-skills/`、`ograc-docs-review/` 同样受规范约束。
 - **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。
 - **扩展字段**：可以使用 `disable-model-invocation` 这类上游未定义的字段，但校验会报 `WARN`，需要在 PR 说明理由。
 

@@ -4,6 +4,7 @@
 规范: https://github.com/agentskills/agentskills/blob/main/docs/specification.mdx
 命名: docs/skill-spec.md 第 4 节
 用法: python3 ci/check_skills.py [--root DIR]... [--spec-only]
+      不传 --root 时额外检查摆放：skill 必须直接在 skills/<name>/，不允许分组目录。
 退出码: 0 全部合规; 1 存在违规
 """
 
@@ -88,6 +89,17 @@ def parse_frontmatter(text):
     return data
 
 
+def nested_skills(root="skills"):
+    found = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in RESOURCE_DIRS]
+        if SKILL_ENTRY in filenames:
+            rel = os.path.relpath(dirpath)
+            if rel.count(os.sep) != 1:
+                found.append(rel)
+    return sorted(found)
+
+
 def discover(roots):
     found = []
     for root in roots:
@@ -98,8 +110,15 @@ def discover(roots):
             continue
         for entry in sorted(os.listdir(root)):
             path = os.path.join(root, entry)
-            if os.path.isdir(path) and entry not in RESOURCE_DIRS:
-                found.append((path, sorted(os.listdir(path))))
+            if not os.path.isdir(path) or entry in RESOURCE_DIRS:
+                continue
+            if not os.path.isfile(os.path.join(path, SKILL_ENTRY)) and any(
+                os.path.isfile(os.path.join(path, sub, SKILL_ENTRY))
+                for sub in os.listdir(path)
+                if os.path.isdir(os.path.join(path, sub))
+            ):
+                continue
+            found.append((path, sorted(os.listdir(path))))
     return found
 
 
@@ -211,6 +230,7 @@ def main(argv):
     for idx, arg in enumerate(argv):
         if arg == "--root" and idx + 1 < len(argv):
             roots.append(argv[idx + 1])
+    roots_from_cli = bool(roots)
     if not roots:
         roots = ["skills", "ograc-skills"]
         roots += sorted(
@@ -222,12 +242,24 @@ def main(argv):
         )
 
     skills = discover(roots)
-    failed = 0
+    skill_failed = 0
+    layout_failed = 0
     warn_count = 0
+    if not roots_from_cli:
+        for path, _listing in skills:
+            rel = os.path.normpath(os.path.relpath(path))
+            if os.path.dirname(rel) != "skills":
+                layout_failed += 1
+                print(f"FAIL  {rel}")
+                print("        - [layout] skill 必须直接位于 skills/<name>/，不要二级分组（见 migration-map M1–M6）")
+        for nested in nested_skills():
+            layout_failed += 1
+            print(f"FAIL  {nested}")
+            print("        - [layout] 不允许在 skills/ 下再加分组目录")
     for path, listing in skills:
         errors, warnings = validate(path, listing, spec_only)
         if errors:
-            failed += 1
+            skill_failed += 1
             print(f"FAIL  {path}")
             for message in errors:
                 print(f"        - {message}")
@@ -235,8 +267,10 @@ def main(argv):
             warn_count += 1
             print(f"WARN  {path}: {message}")
 
-    print(f"\n汇总: {len(skills)} 个 skill，{len(skills) - failed} 合规，{failed} 违规；{warn_count} 条警告")
-    if failed:
+    print(f"\n汇总: {len(skills)} 个 skill，{len(skills) - skill_failed} 合规，{skill_failed} 违规；{warn_count} 条警告")
+    if layout_failed:
+        print(f"摆放: {layout_failed} 个 skill 不在 skills/<name>/")
+    if skill_failed or layout_failed:
         print("规范: https://github.com/agentskills/agentskills/blob/main/docs/specification.mdx")
         return 1
     return 0

@@ -20,7 +20,7 @@
 | R12 | 换行不统一 | 两份 UB 文档转 LF；固件目录名保持原样（随包移出） | huan |
 | **新** | 示例配置泄露凭据 | `run/ograc_run.og`、`run/props.sharding`、`run/props.proxy` 中的真实内网地址与明文口令替换为占位符；`run/loop111test.sh` 的 expect 口令改为环境变量（`OS_PWD`、`OGRAC_SYS_PWD`、`NODE0`）；记录在 `vendor/benchmarksql_ograc/UPSTREAM.md` | hwworkholic |
 | — | 凭据扫描补强 | `ci/check_repo.sh` 除 `password=` 与 `jdbc://IPv4` 外，新增 expect `send` 明文口令检测 | zhangzq131 |
-| — | skill 规范文档与门禁 | 新增 `docs/skill-spec.md`（agentskills 规范落地版 + oGRAC 命名规则）与 `ci/check_skills.py`（字段、命名、目录结构校验），接入 `--strict` | zhangzq131 |
+| — | skill 规范文档与门禁 | 新增 `docs/skill-spec.md`（agentskills 规范落地版 + oGRAC 命名规则 + 扁平摆放规则）与 `ci/check_skills.py`（字段、命名、摆放、目录结构校验），接入 `--strict` | zhangzq131 |
 
 ## 二、待办
 
@@ -36,12 +36,12 @@
 | R13 | skill 不符合 agentskills 规范 | `ci/check_skills.py --spec-only` 基线：6 个 skill，5 合规，1 违规（`ograc-dev-design` 无 `SKILL.md`，实际为三个 `*SKILL.md`）。规范见 [`skill-spec.md`](skill-spec.md) | 按规范拆分：`SKILL.md` 与目录同名、`code-review` 独立成目录 | shirley_zhengx | `python3 ci/check_skills.py --spec-only` 退出码 0 | P1 |
 | R14 | skill 名不符合 oGRAC 命名规则 | 规则 2026-11-26 生效，6 个 skill 全部不满足：4 个第二段不是动词，`tpcc-prepare-data` 缺前缀，`ograc-dev-design` 另有无 `SKILL.md` 问题。改名对照见 [`skill-spec.md`](skill-spec.md) 4.4 | 按对照表改目录名 + `name` + 全仓引用 | zhangzq131（4 个）、luodongxu（1 个）、shirley_zhengx（1 个） | `python3 ci/check_skills.py` 退出码 0 | P1 |
 | R10 | 门禁未进流水线 | `ci/check_repo.sh` 只在本地跑 | 整改项关闭后把 `--strict` 设为默认并接入 GitCode 流水线 | zhangzq131 | 断链、LFS 指针、不合规目录能报红 | P1 |
-| M1 | `ograc-skills/ograc-two-node-deploy/` | 位置未变 | 迁 `skills/ograc-two-node-deploy/` | zhangzq131 | 引用全部更新，`ci` 通过 | P2 |
-| M2 | `ograc-skills/ograc-cold-restore/` | 位置未变 | 迁 `skills/ograc-cold-restore/` | zhangzq131 | 同上 | P2 |
-| M3 | `ograc-skills/tpcc-prepare-data/` | 位置未变，依赖 `vendor/benchmarksql_ograc` | 迁 `skills/tpcc-prepare-data/` | zhangzq131 | 同上 | P2 |
-| M4 | `ograc-skills/ograc-process-fault-longrun/` | 位置未变 | 迁 `skills/ograc-process-fault-longrun/` | zhangzq131 | 同上 | P2 |
-| M5 | `ograc-skills/ograc-dev-design/` | 位置未变，不合规 | 先做 R7 再迁 `skills/ograc-dev-design/` | shirley_zhengx | 同上 | P2 |
-| M6 | `ograc-docs-review/` | 位置未变 | 迁 `skills/ograc-docs-review/` | luodongxu | 同上 | P2 |
+| M1 | `ograc-skills/ograc-two-node-deploy/` | 位置未变 | 迁 `skills/ograc-two-node-deploy/`（扁平，不建分组目录） | zhangzq131 | 引用全部更新，`ci` 通过 | P2 |
+| M2 | `ograc-skills/ograc-cold-restore/` | 位置未变 | 迁 `skills/ograc-cold-restore/`（扁平） | zhangzq131 | 同上 | P2 |
+| M3 | `ograc-skills/tpcc-prepare-data/` | 位置未变，依赖 `vendor/benchmarksql_ograc` | 迁 `skills/tpcc-prepare-data/`（扁平） | zhangzq131 | 同上 | P2 |
+| M4 | `ograc-skills/ograc-process-fault-longrun/` | 位置未变 | 迁 `skills/ograc-process-fault-longrun/`（扁平） | zhangzq131 | 同上 | P2 |
+| M5 | `ograc-skills/ograc-dev-design/` | 位置未变，不合规 | 先做 R7 再迁 `skills/ograc-dev-design/`（扁平） | shirley_zhengx | 同上 | P2 |
+| M6 | `ograc-docs-review/` | 位置未变 | 迁 `skills/ograc-docs-review/`（扁平） | luodongxu | 同上 | P2 |
 | M9 | `common-scripts/ograc_sim_single.sh` | 位置未变 | 迁 `tools/ograc-sim-single/` | zhangzq131 | 同上 | P2 |
 | M10 | `common-scripts/install-two-node.sh` | 已废弃 | 随 R6 删除或迁 `tools/legacy/` | jyn88 | 同上 | P2 |
 | R8 | 文档重复 | 根 README 已是索引；`ograc-skills/README.md` 仍有 127 行细节 | 各 skill README 保留 ≤3 行跳转，细节只在 `SKILL.md` | zhangzq131 | 同一段说明全仓只出现一次 | P2 |

@@ -99,11 +99,12 @@ grep -rl 'ograc-two-node-deploy' --include='*.md' . | xargs sed -i 's/ograc-two-
 python3 ci/check_skills.py
 ```
 
-## 5. 其他仓库约定
+### 5. 摆放与仓库约定
 
-1. **归位**：skill 目录最终放在 `skills/<name>/`；迁移期 `ograc-skills/`、`ograc-docs-review/` 同样受本规范约束。
-2. **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。
-3. **扩展字段**：可以用 `disable-model-invocation` 这类上游未定义的字段（部分客户端支持），但校验会给出 `WARN`，需在 PR 说明理由。
+1. **摆放**：所有 skill **直接**放在 `skills/<name>/`，**不允许再加一级分组**——没有 `skills/security/<name>`、`skills/test/<name>`、`skills/ograc/<name>`。`scripts/`、`references/`、`assets/` 是 skill 内部资源目录，不算分组层。理由：skill 名已经是全局唯一的入口标识，再分组会让同名字在不同路径下出现，也让「复制到 agent 的 skills 目录」变成了两步。
+2. **迁移期**：`ograc-skills/`、`ograc-docs-review/` 属于存量，按 [`migration-map.md`](migration-map.md) M1–M6 迁入 `skills/<name>/`，不另建中间目录。
+3. **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。
+4. **扩展字段**：可以用 `disable-model-invocation` 这类上游未定义的字段（部分客户端支持），但校验会给出 `WARN`，需在 PR 说明理由。
 
 ## 6. 校验
 
@@ -129,6 +130,7 @@ python3 ci/check_skills.py --root <dir>   # 指定目录（用于自测）
 | 用 `_` 连接 | 全部换 `-` |
 | 超过 32 字符 | 拆分 skill 或去掉冗余限定语 |
 | 名字带 `v2` / `new` | 去掉，版本写 `metadata.version` |
+| skill 放在 `ograc-skills/` 或 `skills/<分组>/<name>/` | 直接拍平到 `skills/<name>/` |
 | `description` 只写「帮助处理 xx」 | 补「做什么 + 何时使用 + 关键词」 |
 | `metadata.version: 1.0` | 加引号：`version: "1.0"` |
 | `SKILL.md` 超过 500 行 | 细节移入 `references/` |
@@ -142,5 +144,6 @@ python3 ci/check_skills.py --root <dir>   # 指定目录（用于自测）
 |---|---|
 | 上游规范（第 1–3 节） | 6 个 skill，5 合规，1 违规（`ograc-dev-design` 无 `SKILL.md`） |
 | oGRAC 命名规则（第 4 节） | 6 个 skill，**0 合规**，全部待改名 |
+| 摆放（第 5 节，`skills/<name>/`） | 6 个 skill **全部不在** `skills/` 下，待 M1–M6 迁移 |
 
 两件事分开推进：`ograc-dev-design` 的结构问题记在 R13，六个 skill 的改名记在 R14，责任人与验收见迁移清单。改名完成前 `--strict` 的该项会持续报红，这是预期状态。
