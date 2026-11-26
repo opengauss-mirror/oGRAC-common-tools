@@ -1,0 +1,32 @@
+# 构建产物（BenchmarkSQL 等）
+vendor/benchmarksql_ograc/build/
+vendor/benchmarksql_ograc/dist/
+*.class
+
+# BenchmarkSQL 的第三方 jar 只在本地准备，见 vendor/benchmarksql_ograc/BUILD.md
+vendor/benchmarksql_ograc/lib/**/*.jar
+vendor/benchmarksql_ograc/lib/**/*.tar.gz
+
+# 备份与临时文件
+*.bak
+*.orig
+*.rej
+*.swp
+*~
+
+# 日志与运行数据
+*.log
+my_*
+
+# 安全扫描报告含密钥原文，禁止入库
+**/*敏感信息扫描结果*.md
+**/secret-scan-report*.md
+
+# Python
+__pycache__/
+*.pyc
+
+# 编辑器 / 系统
+.DS_Store
+.idea/
+.vscode/
