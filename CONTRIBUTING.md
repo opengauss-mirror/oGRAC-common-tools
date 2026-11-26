@@ -4,10 +4,10 @@
 
 ## 1. 目录约定
 
-目标结构（迁移进度见 [`docs/migration-map.md`](docs/migration-map.md)）：
+目标结构：
 
 ```
-skills/<skill-name>/      一个 skill 一个目录，入口固定 SKILL.md
+skills/<skill-name>/      一个 skill 一个目录，扁平摆放、不分组，入口固定 SKILL.md
   SKILL.md
   README.md               可选，最多 3 行，只做跳转，不重复 SKILL.md
   scripts/                可执行脚本
@@ -19,8 +19,8 @@ docs/                     跨工具的文档
 ci/                       仓库自检
 ```
 
-历史路径（`ograc-skills/`、`ograc-docs-review/`、`common-scripts/`）在迁移完成前保持可用，新增内容请直接落到目标路径。
 `security-developing-skills/` 与 `ub_installation_doc/images/包/` 已于 2026-11-26 迁出本仓，不要在本仓重建。
+改动归属由 [`CODEOWNERS`](CODEOWNERS) 按路径声明，与第 8 节的责任人表一一对应。
 
 ## 2. Skill 规范
 
@@ -35,7 +35,7 @@ python3 ci/check_skills.py --spec-only    # 只查上游规范
 
 - **命名**：`ograc-<动词>-<对象>[-<限定语>]`，第二段必须出自动词词表，只用 `-` 连接，总长 ≤ 32 字符，不带版本号。见 [`docs/skill-spec.md`](docs/skill-spec.md) 第 4 节。
 
-- **摆放**：skill 直接放在 `skills/<name>/`，**不允许二级分组**（没有 `skills/<分类>/<name>`）；迁移期 `ograc-skills/`、`ograc-docs-review/` 同样受规范约束。
+- **摆放**：skill 直接放在 `skills/<name>/`，**不允许二级分组**（没有 `skills/<分类>/<name>`）；存量已全部迁入，新 skill 直接建在 `skills/<name>/`。
 - **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。
 - **扩展字段**：可以使用 `disable-model-invocation` 这类上游未定义的字段，但校验会报 `WARN`，需要在 PR 说明理由。
 
@@ -85,18 +85,18 @@ python3 ci/check_skills.py  # 只跑 skill 规范校验（agentskills）
 
 ## 8. 模块责任人
 
-以 git 提交历史为依据，按模块分工。改动他人模块请先 @ 对应责任人。
+以 git 提交历史为依据，按模块分工；同一映射写在 [`CODEOWNERS`](CODEOWNERS)，PR 会自动请求对应人。用户名即 GitCode 登录名。
 
 | 模块 / 路径 | 责任人 | 联系方式 |
 |---|---|---|
-| 仓库整体、根 README、`ci/` | zhangzq131（提交历史中亦作 `zhangzq`） | zhangzq131@gmail.com |
-| `ograc-skills/ograc-two-node-deploy`、`ograc-cold-restore`、`tpcc-prepare-data`、`ograc-process-fault-longrun` | zhangzq131 | zhangzq131@gmail.com |
-| `common-scripts/ograc_sim_single.sh` | zhangzq131 | zhangzq131@gmail.com |
-| `common-scripts/install-two-node.sh`（待废弃） | jyn88 | 954966764@qq.com |
-| `ograc-skills/ograc-dev-design` | shirley_zhengx | zhengxue6@huawei.com |
-| `ograc-docs-review` | luodongxu | luodongxu77@163.com |
+| 仓库整体、根 README、`ci/`、`CODEOWNERS` | zhangzq131（提交历史中亦作 `zhangzq`） | zhangzq131@gmail.com |
+| `skills/ograc-deploy-two-node`、`skills/ograc-restore-cold-backup`、`skills/ograc-prepare-tpcc-data`、`skills/ograc-run-process-fault-longrun`、`tools/` | zhangzq131 | zhangzq131@gmail.com |
+| `skills/ograc-develop-from-design`、`skills/ograc-review-pr` | shirley_zhengx | zhengxue6@huawei.com |
+| `skills/ograc-review-docs` | luodongxu | luodongxu77@163.com |
 | `vendor/benchmarksql_ograc/` | hwworkholic | arcoalien@qq.com |
-| `docs/ub-installation/` | huan | hejiahuan11@h-partners.com |
+| `docs/ub-installation/` | huan（GitCode 登录名待确认） | hejiahuan11@h-partners.com |
+
+`install-two-node.sh` 已删除，jyn88 名下暂无模块；需要时再指派。
 
 已迁出模块（改动请到对应仓库）：
 

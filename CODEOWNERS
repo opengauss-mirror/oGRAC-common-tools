@@ -1,0 +1,31 @@
+# 代码所有者：PR 改到匹配路径时，GitCode 自动请求下列评审人。
+# 语法同 .gitignore，后者覆盖前者；账号为 GitCode 登录名。
+# 维护说明见 CONTRIBUTING.md 第 8 节。
+
+# 默认兜底
+*                                            @zhangzq131
+
+# 仓库治理
+/ci/                                         @zhangzq131
+/README.md                                   @zhangzq131
+/CONTRIBUTING.md                             @zhangzq131
+/CHANGELOG.md                                @zhangzq131
+/CODEOWNERS                                  @zhangzq131
+/docs/migration-map.md                       @zhangzq131
+/docs/skill-spec.md                          @zhangzq131
+
+# skills
+/skills/ograc-deploy-two-node/               @zhangzq131
+/skills/ograc-restore-cold-backup/           @zhangzq131
+/skills/ograc-prepare-tpcc-data/             @zhangzq131
+/skills/ograc-run-process-fault-longrun/     @zhangzq131
+/skills/ograc-develop-from-design/           @shirley_zhengx
+/skills/ograc-review-pr/                     @shirley_zhengx
+/skills/ograc-review-docs/                   @luodongxu
+
+# 工具 / 第三方 / 文档
+/tools/                                      @zhangzq131
+/vendor/benchmarksql_ograc/                  @hwworkholic
+
+# TODO: /docs/ub-installation/ 的责任人 huan 的 GitCode 登录名待确认（users/huan 返回 404），
+#       确认后在此补一条 /docs/ub-installation/ @<login>

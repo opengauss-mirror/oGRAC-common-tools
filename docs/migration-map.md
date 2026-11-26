@@ -1,6 +1,6 @@
 # 目录迁移与整改清单
 
-责任人按 git 提交历史归属确定（见 [`../CONTRIBUTING.md`](../CONTRIBUTING.md) 第 8 节）。同一项涉及多人时，第一位为牵头人。
+责任人按 git 提交历史归属确定，与 [`../CODEOWNERS`](../CODEOWNERS)、[`../CONTRIBUTING.md`](../CONTRIBUTING.md) 第 8 节保持一致。同一项涉及多人时，第一位为牵头人。
 
 优先级：**P0** 影响可用性或有安全风险；**P1** 结构重复、规范不符；**P2** 工程卫生。
 
@@ -8,53 +8,44 @@
 
 | ID | 事项 | 结果 | 责任人 |
 |---|---|---|---|
-| R9 | 根 README 缺项 | README 改为目录索引，补上 UB 文档、孤儿脚本、dev-design | zhangzq131 |
+| R9 | 根 README 缺项 | 改为目录索引，随迁移再次收敛为「每个 skill 一行」 | zhangzq131 |
 | R1 | 固件 LFS 断链 | `images/包/` 111 个文件（约 231 MiB）移出本仓，生成 [`firmware-manifest.md`](ub-installation/firmware-manifest.md)（含 77 个 LFS 指针的真实 sha256 与大小）；`.gitattributes` 清掉失效规则 | huan |
 | M11 | UB 文档去留 | 文档留在本仓，迁到 `docs/ub-installation/`；图片随迁；固件链接改为指向清单 | huan |
-| — | 文档中的固件链接 | 目录链接改为升级顺序列表 + 清单引用；`ubsmtest` 改为随包说明 | huan |
-| M7 | 安全 skill 归属 | 拆为独立仓库 `openGauss-security-skills`（10 个文件，已本地提交，未推送） | congzhou2603 |
+| M7 | 安全 skill 归属 | 拆为独立仓库 `openGauss-security-skills`（10 个文件，已本地提交） | congzhou2603 |
 | M8 | BenchmarkSQL 归位 | 迁到 `vendor/benchmarksql_ograc/` | hwworkholic |
 | R4 | 构建产物入库 | 删除 `build/`（21 个 `.class`）、`dist/*.jar`、`src/client.zip`、`jTPCC.java.bak` | hwworkholic |
 | R5 | 驱动版本混乱 | 删除 `lib/` 下 9 个 jar/tar.gz（含误命名文件），改为按 [`BUILD.md`](../vendor/benchmarksql_ograc/BUILD.md) 本地获取 | hwworkholic |
 | R11 | 上游 Python 2 脚本 | 保留原样，`BUILD.md` 第 8 节标注，`ci` 对该路径豁免 | hwworkholic |
-| R12 | 换行不统一 | 两份 UB 文档转 LF；固件目录名保持原样（随包移出） | huan |
-| **新** | 示例配置泄露凭据 | `run/ograc_run.og`、`run/props.sharding`、`run/props.proxy` 中的真实内网地址与明文口令替换为占位符；`run/loop111test.sh` 的 expect 口令改为环境变量（`OS_PWD`、`OGRAC_SYS_PWD`、`NODE0`）；记录在 `vendor/benchmarksql_ograc/UPSTREAM.md` | hwworkholic |
-| — | 凭据扫描补强 | `ci/check_repo.sh` 除 `password=` 与 `jdbc://IPv4` 外，新增 expect `send` 明文口令检测 | zhangzq131 |
-| — | skill 规范文档与门禁 | 新增 `docs/skill-spec.md`（agentskills 规范落地版 + oGRAC 命名规则 + 扁平摆放规则）与 `ci/check_skills.py`（字段、命名、摆放、目录结构校验），接入 `--strict` | zhangzq131 |
+| R12 | 换行不统一 | 两份 UB 文档转 LF | huan |
+| — | 示例配置泄露凭据 | `run/ograc_run.og`、`run/props.sharding`、`run/props.proxy` 改占位符；`run/loop111test.sh` 的 expect 口令改为环境变量；记录在 [`UPSTREAM.md`](../vendor/benchmarksql_ograc/UPSTREAM.md) | hwworkholic |
+| — | 凭据扫描补强 | `ci/check_repo.sh` 覆盖 `password=`、`jdbc://IPv4`、expect `send` 明文口令三类 | zhangzq131 |
+| — | skill 规范与门禁 | `docs/skill-spec.md`（agentskills + oGRAC 命名 + 扁平摆放）+ `ci/check_skills.py`，接入门禁 | zhangzq131 |
+| R7 / R13 | `ograc-dev-design` 结构不合规 | 拆为 `skills/ograc-develop-from-design/`（`SKILL.md` + `references/prompt-patterns.md`）与 `skills/ograc-review-pr/`；重名、断链、入口缺失同时解决 | shirley_zhengx |
+| R14 / M1–M6 | 6 个 skill 改名并迁入 `skills/` | 全部完成，见 [`skill-spec.md`](skill-spec.md) 4.4；新增 `skills/ograc-review-pr/` | zhangzq131 / luodongxu / shirley_zhengx |
+| R2 / M9 | sim 脚本口令与归位 | `tools/ograc-sim-single/ograc-sim-single.sh`：口令改读 `OGRAC_SYS_PASSWORD`，未设则随机生成 16 位写 600 文件 | zhangzq131 |
+| R3 / R6 / M10 | 废弃部署脚本 | 删除 `common-scripts/install-two-node.sh`（858 行、带 `-p/--password`），内容留在 git 历史 | jyn88 |
+| R8 | 文档重复 | 删除 `ograc-skills/README.md`（127 行重复）；`skills/README.md` 收敛为「表格 + 通用约定」 | zhangzq131 |
+| R15 | 无 CODEOWNERS | 新增 [`CODEOWNERS`](../CODEOWNERS)，7 个 skill、`tools/`、`vendor/`、治理文件按路径映射 | zhangzq131 |
+| R16 | vendored 许可缺失 | 新增 [`NOTICE.md`](../vendor/benchmarksql_ograc/NOTICE.md)：标明上游未随源码保留许可，禁止按 MulanPSL 再分发；许可证原文仍待补 | hwworkholic |
+| R10 | 门禁未默认 | `ci/check_repo.sh` 默认跑全量检查，`--quick` 保留快速回路；`--strict` 仍兼容 | zhangzq131 |
 
 ## 二、待办
 
 | ID | 事项 | 现状与证据 | 动作 | 责任人 | 验收 | 优先级 |
 |---|---|---|---|---|---|---|
-| G1 | MR #18 待评审合并 | 10 个提交，`mergeable: true`，`merge_by_self_passed: true`；未合并前所有整理只在分支上 | 评审后合并，删除分支 | luodongxu（作者）+ zhangzq131（评审） | `opengauss/master` 包含这批提交 | P0 |
-| S1 | 口令轮换 | 上述口令已进入 git 历史，等同泄露（涉 `ograc_run.og`、`props.sharding`、`loop111test.sh`） | 轮换数据库与节点口令；评估是否重写历史 | jyn88（原提交人）+ 仓库管理员 | 旧口令失效；决定记录在 `UPSTREAM.md` | P0 |
-| R2 | 默认口令硬编码 | `common-scripts/ograc_sim_single.sh:266`、`:276` 两处写入固定口令 | 改读 `OGRAC_SYS_PASSWORD`，未设则随机生成写 600 文件 | zhangzq131 | 脚本内无口令字面量 | P0 |
-| R3 | 命令行明文口令 | `common-scripts/install-two-node.sh` 的 `-p/--password`（第 24/260 行）、`--node1-root-password` | 脚本已废弃，随 R6 删除 | jyn88 | 文件内无该参数 | P0 |
-| S2 | 固件最终位置 | 当前仅暂存在 `oGRAC-firmware-packages`，77 个 LFS 实体仍未取回 | 取回实体、校验 `firmware.sha256`、确定发布位置并回写 `firmware-README.md` | huan | `sha256sum -c` 全 OK，文档指向最终位置 | P1 |
+| G1 | MR #18 待评审合并 | 分支 `refactor/repo-cleanup`，`mergeable: true`，`merge_by_self_passed: true`；未合并前所有整理只在分支上 | 评审后合并，删除分支 | luodongxu（作者）+ zhangzq131（评审） | `opengauss/master` 包含这批提交 | P0 |
+| S1 | 口令轮换 | 旧口令仍在 git 历史（`ograc_run.og`、`props.sharding`、`loop111test.sh`），等同泄露 | 轮换数据库与节点口令；评估是否重写历史 | jyn88（原提交人）+ 仓库管理员 | 旧口令失效；决定记录在 `UPSTREAM.md` | P0 |
+| S2 | 固件实体与最终位置 | 77 个 LFS 实体仍未取回（`sha256sum -c` 有 77 个 FAILED）；发布位置未定 | 取回实体、校验、定发布位置并回写 `firmware-README.md` | huan | `sha256sum -c` 全 OK，文档指向最终位置 | P1 |
 | S3 | 安全仓远端 | 独立仓只有本地初始提交，`git remote -v` 为空 | 在 GitCode 建仓并推送，通知使用方改地址 | congzhou2603 | 远端可克隆，两个 SKILL.md 可加载 | P1 |
-| S4 | 安全仓无规范与门禁 | 该仓只有 README、LICENSE 与两个 skill，无 `docs/skill-spec.md` 类规范、无 `ci/`，技能名 `opengauss-*` 未定义本仓命名规则 | 复用本仓的规范文档与校验器，前缀改为 `opengauss-` | congzhou2603 | 该仓有自己的规范文档与可跑的校验 | P2 |
-| R6 | 孤儿部署脚本 | `install-two-node.sh` 858 行、权限 644、无引用、与 `ograc-two-node-deploy` 重复 | 删除或移入 `tools/legacy/` | jyn88 | `--strict` 的「可执行位」项转绿 | P1 |
-| R7 | skill 目录不合规 | `ograc-skills/ograc-dev-design/` 无 `SKILL.md`，4 个文件里 2 个声明同一 `name`，`代码检视SKILL.md` 与外部 `gitcode-pr-review` 重名，链接 `gitcode-api.md` 不存在 | 合并为 `SKILL.md` + `references/`，检视 skill 独立成目录，修断链 | shirley_zhengx | `--strict` 的 skill 规范与断链两项转绿 | P1 |
-| R13 | skill 不符合 agentskills 规范 | `ci/check_skills.py --spec-only` 基线：6 个 skill，5 合规，1 违规（`ograc-dev-design` 无 `SKILL.md`，实际为三个 `*SKILL.md`）。与 R7 是同一处问题，本条只负责规范侧验收 | 随 R7 一并完成：拆出 `SKILL.md`、检视 skill 独立成目录 | shirley_zhengx | `python3 ci/check_skills.py --spec-only` 退出码 0 | P1 |
-| R14 | skill 名不符合 oGRAC 命名规则 | 规则 2026-11-26 生效，6 个 skill 全部不满足：4 个第二段不是动词，`tpcc-prepare-data` 缺前缀，`ograc-dev-design` 另有无 `SKILL.md` 问题。改名对照见 [`skill-spec.md`](skill-spec.md) 4.4 | 按对照表改目录名 + `name` + 全仓引用 | zhangzq131（4 个）、luodongxu（1 个）、shirley_zhengx（1 个） | `python3 ci/check_skills.py` 退出码 0 | P1 |
-| R10 | 门禁未进流水线 | `ci/check_repo.sh` 只在本地跑，`--strict` 未设为默认 | 整改项关闭后把 `--strict` 设为默认并接入 GitCode 流水线 | zhangzq131 | 断链、LFS 指针、不合规目录能报红 | P1 |
-| R15 | 无 CODEOWNERS | 7 个责任人分模块维护，评审路由靠人记：MR #18 的 `reviewers` 为 `None`，仓级设置 `approval_required_reviewers_count=0`、`disable_merge_by_self=false`，即作者可自合。GitCode 支持 CODEOWNERS，查找顺序 `CODEOWNERS` → `.gitcode/CODEOWNERS` → `docs/CODEOWNERS`（[官方说明](https://docs.gitcode.com/docs/help/home/org_project/project_manage/file_operations/code-owners/)）。6 个账号已在 API 核实（zhangzq131、jyn88、luodongxu、shirley_zhengx、congzhou2603、hwworkholic），`huan` 在 GitCode 无同名账号（404），该路径暂无法写对 | 新增 `CODEOWNERS` 按路径映射；同时把默认分支必需评审数设为 ≥1（只管路由不配强制，等于没拦） | zhangzq131（需先落实 huan 的 GitCode 账号） | PR 改到某模块时自动请求该模块责任人，且未获批不能合 | P2 |
-| R16 | vendored 许可缺失 | `vendor/benchmarksql_ograc/` 无 `LICENSE`/`COPYING`，`HOW-TO-RUN.txt` 也不含许可声明；根 LICENSE 是 MulanPSL，不能覆盖上游许可 | 补上游许可证文件或 `NOTICE`，在 `UPSTREAM.md` 记录许可与来源 | hwworkholic | `vendor/` 下有许可文件且 README 指向它 | P1 |
-| M1 | `ograc-skills/ograc-two-node-deploy/` | 位置未变，违反扁平摆放规则 | 与 R14 同批：改名并迁入 `skills/ograc-deploy-two-node/` | zhangzq131 | 引用全部更新，`ci` 通过 | P1 |
-| M2 | `ograc-skills/ograc-cold-restore/` | 位置未变 | 与 R14 同批：迁 `skills/ograc-restore-cold-backup/` | zhangzq131 | 同上 | P1 |
-| M3 | `ograc-skills/tpcc-prepare-data/` | 位置未变，依赖 `vendor/benchmarksql_ograc` | 与 R14 同批：迁 `skills/ograc-prepare-tpcc-data/` | zhangzq131 | 同上 | P1 |
-| M4 | `ograc-skills/ograc-process-fault-longrun/` | 位置未变 | 与 R14 同批：迁 `skills/ograc-run-process-fault-longrun/` | zhangzq131 | 同上 | P1 |
-| M5 | `ograc-skills/ograc-dev-design/` | 位置未变，结构不合规 | 先做 R13，再与 R14 同批迁 `skills/ograc-develop-from-design/` | shirley_zhengx | 同上 | P1 |
-| M6 | `ograc-docs-review/` | 位置未变 | 与 R14 同批：迁 `skills/ograc-review-docs/` | luodongxu | 同上 | P1 |
-| M9 | `common-scripts/ograc_sim_single.sh` | 位置未变 | 迁 `tools/ograc-sim-single/` | zhangzq131 | 同上 | P2 |
-| M10 | `common-scripts/install-two-node.sh` | 已废弃 | 随 R6 删除或迁 `tools/legacy/` | jyn88 | 同上 | P2 |
-| R8 | 文档重复 | 根 README 已是索引；`ograc-skills/README.md` 仍有 127 行细节 | 各 skill README 保留 ≤3 行跳转，细节只在 `SKILL.md` | zhangzq131 | 同一段说明全仓只出现一次 | P2 |
+| R16 | 补上游许可证原文 | `vendor/benchmarksql_ograc/NOTICE.md` 已说明现状，仍缺许可证本体 | 从上游发布包取出 `LICENSE`/`COPYING` 放到位 | hwworkholic | 目录内有许可文件且 NOTICE 指向它 | P1 |
+| R15 | CODEOWNERS 收尾 | `docs/ub-installation/` 的 owner `huan` 在 GitCode 无同名账号；仓级 `approval_required_reviewers_count=0`，路由不拦截 | 确认 huan 的登录名并补规则；把必需评审数设为 ≥1 | zhangzq131（需 huan 提供账号） | 改到该路径自动请求评审，且未获批不能合 | P1 |
+| R10 | 门禁接入流水线 | 本地已默认全量，但未接 GitCode 流水线 | 按平台 CI 格式接入，PR 必跑 | zhangzq131 | PR 上可见检查结果，失败阻断合并 | P1 |
+| S4 | 安全仓无规范与门禁 | 该仓只有 README、LICENSE 与两个 skill，无规范文档、无 `ci/`；技能名 `opengauss-*` 未定义命名规则 | 复用本仓规范与校验器，前缀改 `opengauss-` | congzhou2603 | 该仓有自己的规范文档与可跑的校验 | P2 |
 
 ## 三、执行顺序
 
 1. **G1**：先合 MR，否则下面所有整改都堆在分支上。
-2. **S1、R2、R3**：安全项，先止血再谈结构。
-3. **S2、S3**：两个已拆出资产补齐远端与实体文件，别让拆分停在半路。
-4. **R13 → R14 + M1–M6**：先合规再迁移，改名与迁移合并成一个 PR 完成。
-5. **R6 → M10、R16**：孤儿脚本处置与 vendored 许可。
-6. **R8、R10、R15**：文档收敛、接流水线、补 CODEOWNERS。
+2. **S1**：口令轮换，历史处置由管理员定。
+3. **S2、S3、R16**：三个已拆出/第三方资产的收尾。
+4. **R15、R10**：评审与流水线两道门配齐。
+5. **S4**：安全仓自建规范。

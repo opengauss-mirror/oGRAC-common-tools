@@ -17,9 +17,16 @@
 - `vendor/benchmarksql_ograc/UPSTREAM.md`：上游基线、本分支改动、已删除文件清单。
 - `docs/ub-installation/firmware-manifest.md`：固件清单（111 个文件、sha256、真实大小）。
 - `docs/ub-installation/firmware-README.md`：固件获取与校验说明。
+- `CODEOWNERS`：按路径声明 7 个 skill、`tools/`、`vendor/` 与治理文件的评审人；`docs/ub-installation/` 待 huan 的 GitCode 账号确认后补。
+- `vendor/benchmarksql_ograc/NOTICE.md`：标明上游许可未随源码保留，禁止按 MulanPSL 再分发。
+- `skills/ograc-review-pr/`：从 `ograc-dev-design` 拆出的 GitCode PR 行级检视 skill，自带 `.gitignore` 隔离凭据文件。
+- `tools/ograc-sim-single/README.md`：补上原 `common-scripts/README.md` 的内容并说明 `OGRAC_SYS_PASSWORD`。
 
 ### Changed
 
+- **6 个 skill 改名并迁入 `skills/`**（扁平、不分组）：`ograc-two-node-deploy`→`ograc-deploy-two-node`、`ograc-cold-restore`→`ograc-restore-cold-backup`、`tpcc-prepare-data`→`ograc-prepare-tpcc-data`、`ograc-process-fault-longrun`→`ograc-run-process-fault-longrun`、`ograc-docs-review`→`ograc-review-docs`、`ograc-dev-design`→`ograc-develop-from-design` + `ograc-review-pr`。
+- `common-scripts/ograc_sim_single.sh` → `tools/ograc-sim-single/ograc-sim-single.sh`；数据库 sys 口令改为读 `OGRAC_SYS_PASSWORD`，未设置时随机生成 16 位并写 600 文件。
+- `ci/check_repo.sh` 默认跑全量检查（含断链、skill 规范、LFS 指针、可执行位），`--quick` 保留快速回路。
 - `benchmarksql_ograc/` → `vendor/benchmarksql_ograc/`，只保留源码。
 - `ub_installation_doc/` 的两份文档与截图 → `docs/ub-installation/`，改为 LF 换行。
 - `.gitattributes` 精简为文本规范化规则；固件 LFS 规则随文件移出而失效，已删除。
@@ -27,6 +34,10 @@
 
 ### Removed
 
+- `common-scripts/install-two-node.sh`：858 行的废弃部署脚本，与 `skills/ograc-deploy-two-node` 重复且以命令行传明文口令；内容保留在 git 历史。
+- `common-scripts/` 目录：最后一个脚本迁入 `tools/ograc-sim-single/`。
+- `ograc-skills/README.md`：127 行与各 `SKILL.md` 重复的说明，内容并入 `skills/README.md`。
+- `ograc-skills/ograc-dev-design/` 的三个非规范入口（`design_driven_dev_SKILL.md`、`设计文档驱动开发SKILL.md`、`代码检视SKILL.md`）：改为标准 `SKILL.md` 结构。
 - `benchmarksql_ograc/build/`、`dist/`、`src/client.zip`、`src/client/jTPCC.java.bak`。
 - `lib/` 下 9 个 jar/tar.gz，含误命名的 `opengauss-jdbc-7.0.0-RC7.jar_2uweiwue`。
 - `security-developing-skills/`：拆为独立仓库 `openGauss-security-skills`。

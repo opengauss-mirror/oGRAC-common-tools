@@ -77,32 +77,25 @@ run      scan    sync      test     uninstall upgrade   verify
 | `ograc-deploy-two-node-cluster-check` | ❌ | 35 字符，超 N5，应拆成两个 skill |
 | `ograc-install-helper` | ❌ | `helper` 命中 N6 |
 
-### 4.4 存量改名对照
+### 4.4 改名记录（2026-11-26 已完成）
 
-规则自 2026-11-26 起生效。存量 6 个 skill 全部不满足新规则（原规则只要求「看起来像 skill」），按下表改名；改名需同步目录名、`name` 字段和所有引用，落项见 [`migration-map.md`](migration-map.md) R14。
+规则生效时存量 6 个 skill 全部不满足；已按下表改名并迁入 `skills/`。`ograc-dev-design` 同时拆为两个 skill（开发与 PR 检视），两个 `*SKILL.md` 重名的问题随之消失。
 
-| 现名 | 建议名 | 长度 | 责任人 |
+| 原名 | 新名 | 目录 | 责任人 |
 |---|---|---|---|
-| `ograc-two-node-deploy` | `ograc-deploy-two-node` | 21 | zhangzq131 |
-| `ograc-cold-restore` | `ograc-restore-cold-backup` | 25 | zhangzq131 |
-| `tpcc-prepare-data` | `ograc-prepare-tpcc-data` | 23 | zhangzq131 |
-| `ograc-process-fault-longrun` | `ograc-run-process-fault-longrun` | 31 | zhangzq131 |
-| `ograc-docs-review` | `ograc-review-docs` | 17 | luodongxu |
-| `ograc-dev-design` | `ograc-develop-from-design` | 25 | shirley_zhengx |
+| `ograc-two-node-deploy` | `ograc-deploy-two-node` | `skills/ograc-deploy-two-node/` | zhangzq131 |
+| `ograc-cold-restore` | `ograc-restore-cold-backup` | `skills/ograc-restore-cold-backup/` | zhangzq131 |
+| `tpcc-prepare-data` | `ograc-prepare-tpcc-data` | `skills/ograc-prepare-tpcc-data/` | zhangzq131 |
+| `ograc-process-fault-longrun` | `ograc-run-process-fault-longrun` | `skills/ograc-run-process-fault-longrun/` | zhangzq131 |
+| `ograc-docs-review` | `ograc-review-docs` | `skills/ograc-review-docs/` | luodongxu |
+| `ograc-dev-design` | `ograc-develop-from-design` + `ograc-review-pr` | `skills/ograc-develop-from-design/`、`skills/ograc-review-pr/` | shirley_zhengx |
 
-改名命令（以「迁入 `skills/` 的同时改名」为例，其余同理）：
-
-```bash
-git mv ograc-skills/ograc-two-node-deploy skills/ograc-deploy-two-node
-sed -i 's/^name: ograc-two-node-deploy$/name: ograc-deploy-two-node/' skills/ograc-deploy-two-node/SKILL.md
-grep -rl 'ograc-two-node-deploy' --include='*.md' . | xargs sed -i 's/ograc-two-node-deploy/ograc-deploy-two-node/g'
-python3 ci/check_skills.py
-```
+后续再改名遵循三步：改目录名 → 改 `name` 字段 → 全仓替换引用（`grep -rl <旧名> --include='*.md' .`），最后 `python3 ci/check_skills.py`。
 
 ### 5. 摆放与仓库约定
 
 1. **摆放**：所有 skill **直接**放在 `skills/<name>/`，**不允许再加一级分组**——没有 `skills/security/<name>`、`skills/test/<name>`、`skills/ograc/<name>`。`scripts/`、`references/`、`assets/` 是 skill 内部资源目录，不算分组层。理由：skill 名已经是全局唯一的入口标识，再分组会让同名字在不同路径下出现，也让「复制到 agent 的 skills 目录」变成了两步。
-2. **迁移期**：`ograc-skills/`、`ograc-docs-review/` 属于存量，按 [`migration-map.md`](migration-map.md) M1–M6 迁入 `skills/<name>/`，不另建中间目录。
+2. **现状**：6 个存量 skill 已全部迁入 `skills/<name>/`（见 4.4）；新 skill 直接建在 `skills/<name>/`，不建中间目录。
 3. **文档不重复**：`SKILL.md` 是唯一真源；目录里的 `README.md` 最多 3 行、只做跳转。
 4. **扩展字段**：可以用 `disable-model-invocation` 这类上游未定义的字段（部分客户端支持），但校验会给出 `WARN`，需在 PR 说明理由。
 
@@ -114,7 +107,7 @@ python3 ci/check_skills.py --spec-only    # 只查上游规范，跳过 4.x 命�
 python3 ci/check_skills.py --root <dir>   # 指定目录（用于自测）
 ```
 
-`ci/check_repo.sh --strict` 会把它作为一项门禁。`FAIL` 计入退出码 1，`WARN` 只提示。
+`ci/check_repo.sh`（默认已含全量检查）会把它作为一项门禁。`FAIL` 计入退出码 1，`WARN` 只提示。
 
 上游参考实现是 [`skills-ref`](https://github.com/agentskills/agentskills/tree/main/skills-ref)（`skills-ref validate ./my-skill`），只覆盖第 1–3 节；第 4 节是本仓自定，`skills-ref` 不检查。本仓用标准库自实现，是为了在无网络、无额外依赖的 CI 里也能跑。
 
@@ -136,14 +129,16 @@ python3 ci/check_skills.py --root <dir>   # 指定目录（用于自测）
 | `SKILL.md` 超过 500 行 | 细节移入 `references/` |
 | 引用写成 `references/a/b/c.md` | 压平到一层 |
 
-## 8. 存量状态
+## 8. 现状
 
-截至 2026-11-26：
+截至 2026-11-26（迁移完成后）：
 
 | 检查 | 结果 |
 |---|---|
-| 上游规范（第 1–3 节） | 6 个 skill，5 合规，1 违规（`ograc-dev-design` 无 `SKILL.md`） |
-| oGRAC 命名规则（第 4 节） | 6 个 skill，**0 合规**，全部待改名 |
-| 摆放（第 5 节，`skills/<name>/`） | 6 个 skill **全部不在** `skills/` 下，待 M1–M6 迁移 |
+| 上游规范（第 1–3 节） | 7 个 skill，全部合规 |
+| oGRAC 命名规则（第 4 节） | 7 个 skill，全部合规 |
+| 摆放（第 5 节） | 7 个 skill 均在 `skills/<name>/` |
 
-两件事分开推进：`ograc-dev-design` 的结构问题记在 R13，六个 skill 的改名记在 R14，责任人与验收见迁移清单。改名完成前 `--strict` 的该项会持续报红，这是预期状态。
+`python3 ci/check_skills.py` 退出码 0，只剩 1 条 WARN：`ograc-develop-from-design` 使用非规范字段 `disable-model-invocation`（第 5 节第 4 条允许，需在 PR 说明理由）。
+
+历史整改项（R7/R13/R14、M1–M6）已于 2026-11-26 关闭，记录见 [`migration-map.md`](migration-map.md)。

@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 # 仓库质量门禁。
 #
-# 用法: ci/check_repo.sh [--strict]
-#   默认模式: shell 语法、Python 3 语法、README 目录索引、明文密钥。
-#   --strict : 额外检查 skill 规范（agentskills + oGRAC 命名 + 扁平摆放）、Markdown 断链、未展开的 LFS 指针、脚本可执行位。
+# 用法: ci/check_repo.sh [--quick]
+#   默认: 全部检查 —— shell/Python 语法、README 索引、明文密钥、skill 规范（agentskills + oGRAC 命名 + 扁平摆放）、Markdown 断链、LFS 指针、可执行位。
+#   --quick: 只跑语法、索引、密钥四项，用于本地快速回路。
 #
 # 整改项与责任人见 docs/migration-map.md。
 set -uo pipefail
 
 usage() { sed -n '3,6p' "$0" | sed 's/^# \{0,1\}//'; }
 
-strict=0
+strict=1
 while [ $# -gt 0 ]; do
     case "$1" in
         --strict) strict=1; shift ;;
+        --quick) strict=0; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "未知参数: $1" >&2; usage >&2; exit 2 ;;
     esac
@@ -142,7 +143,7 @@ check_exec_bits() {
     return $rc
 }
 
-printf '仓库自检（%s）\n' "$([ "$strict" -eq 1 ] && echo strict || echo default)"
+printf '仓库自检（%s）\n' "$([ "$strict" -eq 1 ] && echo full || echo quick)"
 run_check "shell 语法 (bash -n)" check_shell
 run_check "Python 3 语法" check_python
 run_check "README 目录索引完整性" check_readme_index
