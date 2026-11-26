@@ -11,6 +11,7 @@
 - `docs/skill-spec.md`：skill 目录规范。第 1–3 节为 agentskills 原规范，第 4 节为 oGRAC 命名规则（`ograc-<动词>-<对象>`、动词词表、只用 `-`、≤ 32 字符、禁版本号与 `helper` 类词），第 5 节规定**扁平摆放**：`skills/<name>/`，不允许 `skills/<分类>/<name>`。含正反例与改名对照。
 - `docs/pr-guide.md`：PR 指引。按改动类型给出目录对照（skill / 脚本 / 参考文档 / 工具 / 第三方 / 安装文档 / 治理文档），列出不能入库的内容、提交流程、常见驳回原因。
 - `ci/check_layout.py`：按 PR 指引检查文件归位——顶层目录白名单、根目录 md 白名单、`references/` 位置、脚本位置、二进制禁令；`vendor/` 保留上游结构豁免归位但仍禁构建产物；支持 `--base <ref>` 只查本分支改动，已用 5 类违规夹具验证。
+- `.gitcode/workflows/gate.yml`：GitCode Actions 流水线，push 到 master / PR open·update·reopen / 手动触发时安装 Python 3.12 并跑 `ci/check_repo.sh`；`gc actions yaml validate` 校验通过。README 索引与门禁说明同步；`ci/check_repo.sh` 的目录索引检查跳过 `.` 开头的目录。
 - `ci/check_skills.py`：按 agentskills 规范加 oGRAC 命名规则校验 skill 目录（`name` 与目录同名、命名字符、`description` 长度、`metadata` 值类型、入口文件名、500 行建议、引用层级、前缀/动词/连接符/长度/禁用词），并按第 5 节检查摆放（必须在 `skills/<name>/`，且禁止二级分组）；支持 `--spec-only` 只查上游规范；已用 21 个夹具验证每条规则能触发。
 - `docs/migration-map.md`：目录迁移与整改清单，含责任人与验收标准。
 - 目录骨架：`skills/`、`tools/`、`vendor/`、`docs/`。

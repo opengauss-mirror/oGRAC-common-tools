@@ -30,6 +30,7 @@
 | R10 | 门禁未默认 | `ci/check_repo.sh` 默认跑全量检查，`--quick` 保留快速回路；`--strict` 仍兼容 | zhangzq131 |
 | S2 | 固件实体取回 | 77 个 LFS 指针实体已用标准库脚本（LFS 批量接口）全部取回，`sha256sum -c firmware.sha256` → **111 个全部 OK**，包内已无指针 | huan |
 | S3 | 安全仓远端 | 已在 GitCode 建仓 `luodongxu/openGauss-security-skills`（public）并推送，远端 master = `f1be01c` | congzhou2603 |
+| R10 | 门禁入流水线 | 新增 `.gitcode/workflows/gate.yml`：push 到 master、PR open/update/reopen、手动触发时跑 `ci/check_repo.sh`；`gc actions yaml validate` 校验通过 | zhangzq131 |
 
 ## 二、待办
 
@@ -41,7 +42,7 @@
 | S3 | 通知使用方改地址 | 仓已建并推送，但原来引用本仓路径的人还不知情 | 在团队渠道告知新地址，必要时改旧 README 引用 | congzhou2603 | 无人在旧路径上提改动 | P2 |
 | R16 | 补上游许可证原文 | `vendor/benchmarksql_ograc/NOTICE.md` 已说明现状，仍缺许可证本体 | 从上游发布包取出 `LICENSE`/`COPYING` 放到位 | hwworkholic | 目录内有许可文件且 NOTICE 指向它 | P1 |
 | R15 | CODEOWNERS 收尾 | `docs/ub-installation/` 的 owner `huan` 在 GitCode 无同名账号；仓级 `approval_required_reviewers_count=0`，路由不拦截 | 确认 huan 的登录名并补规则；把必需评审数设为 ≥1 | zhangzq131（需 huan 提供账号） | 改到该路径自动请求评审，且未获批不能合 | P1 |
-| R10 | 门禁接入流水线 | 本地已默认全量，但未接 GitCode 流水线 | 按平台 CI 格式接入，PR 必跑 | zhangzq131 | PR 上可见检查结果，失败阻断合并 | P1 |
+| R10 | 启用 Actions 与必需检查 | 工作流已入库，但仓库 Actions 开关和「必需通过后才能合」需管理员在页面开启（CLI 的 `actions setting` 需要网页会话 JWT，不是 PAT） | 后台开启 Actions，把 `repo-gate` 设为必需检查 | 仓库管理员 + zhangzq131 | MR 上可见 `repo-gate` 结果，失败不能合 | P1 |
 | S4 | 安全仓无规范与门禁 | 该仓只有 README、LICENSE 与两个 skill，无规范文档、无 `ci/`；技能名 `opengauss-*` 未定义命名规则 | 复用本仓规范与校验器，前缀改 `opengauss-` | congzhou2603 | 该仓有自己的规范文档与可跑的校验 | P2 |
 
 ## 三、执行顺序
@@ -49,5 +50,5 @@
 1. **G1**：先合 MR，否则下面所有整改都堆在分支上。
 2. **S1**：口令轮换，历史处置由管理员定。
 3. **S2（发布位置）、S3、R16**：三个已拆出/第三方资产的收尾。
-4. **R15、R10**：评审与流水线两道门配齐。
+4. **R15、R10（开关）**：评审路由与流水线开关，两项都要管理员在页面动。
 5. **S4**：安全仓自建规范。

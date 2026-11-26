@@ -36,6 +36,7 @@ cp -r skills/ograc-deploy-two-node ~/.codex/skills/
 | [`docs/ub-installation/`](docs/ub-installation/安装UB流程.md) | 整机 OS 安装 + 固件升级手册；固件包已拆出 | huan |
 | [`docs/`](docs/README.md) | 跨工具文档；skill 规范见 [`docs/skill-spec.md`](docs/skill-spec.md) | huan |
 | [`ci/`](CONTRIBUTING.md) | 仓库自检脚本 | zhangzq131 |
+| [`.gitcode/workflows/`](.gitcode/workflows/gate.yml) | GitCode Actions 流水线：PR 与 push 到 master 时跑 `ci/check_repo.sh` | zhangzq131 |
 
 skill 的命名、字段与摆放规则见 [`docs/skill-spec.md`](docs/skill-spec.md)，校验入口 `python3 ci/check_skills.py`。
 
@@ -52,6 +53,7 @@ skill 的命名、字段与摆放规则见 [`docs/skill-spec.md`](docs/skill-spe
 
 - 新增或修改 skill、脚本、二进制前，先读 [`CONTRIBUTING.md`](CONTRIBUTING.md)；**新增文件放哪个目录**见 [`docs/pr-guide.md`](docs/pr-guide.md)；skill 的字段、命名与摆放规范见 [`docs/skill-spec.md`](docs/skill-spec.md)。
 - 提交前跑 `ci/check_repo.sh`（9 项：语法、索引、密钥、skill 规范、文件归位、断链、LFS 指针、可执行位）；只要快速语法检查时用 `ci/check_repo.sh --quick`。
+- 同一套检查在流水线里跑：[`.gitcode/workflows/gate.yml`](.gitcode/workflows/gate.yml)，PR 提交与更新时自动执行。
 - 每项整改的负责人、验收标准和进度见 [`docs/migration-map.md`](docs/migration-map.md)。
 - 变更记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 

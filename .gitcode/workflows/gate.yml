@@ -1,0 +1,56 @@
+name: repo-gate
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - open
+      - update
+      - reopen
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  repository: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  enable: true
+  max: 1
+  exceed-action: QUEUE
+  preemption:
+    enable: true
+    events: [mr_id]
+
+jobs:
+  gate:
+    name: 仓库门禁
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出代码
+        uses: checkout
+
+      - name: 安装 Python
+        uses: setup-python
+        with:
+          python-version: '3.12'
+
+      - name: 打印环境
+        run: |
+          set -euo pipefail
+          git rev-parse --show-toplevel
+          python3 --version
+          bash --version | head -1
+
+      - name: 运行门禁（ci/check_repo.sh）
+        run: |
+          set -euo pipefail
+          chmod +x ci/check_repo.sh ci/*.py
+          ci/check_repo.sh

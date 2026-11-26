@@ -73,7 +73,7 @@ check_readme_index() {
         echo "缺少 README.md"
         return 1
     fi
-    for d in $(tracked | awk -F/ 'NF > 1 { print $1 }' | sort -u); do
+    for d in $(tracked | awk -F/ 'NF > 1 && $1 !~ /^\./ { print $1 }' | sort -u); do
         if ! grep -q -- "$d" README.md; then
             printf 'README.md 未收录目录: %s/\n' "$d"
             rc=1
